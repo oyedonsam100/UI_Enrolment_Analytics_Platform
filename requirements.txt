@@ -7,3 +7,4 @@ plotly
 openpyxl
 statsmodels
 scipy>=1.12.0
+matplotlib
