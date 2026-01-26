@@ -1,0 +1,11 @@
+# Data protection
+data/
+*.csv
+*.xlsx
+*.xls
+*.pkl
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+venv/

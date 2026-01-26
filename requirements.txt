@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+scikit-learn
+joblib
+plotly
+openpyxl
+statsmodels
+scipy>=1.12.0
