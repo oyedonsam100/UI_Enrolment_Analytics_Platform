@@ -13,6 +13,10 @@ evidence-based decision-making.
 - Academic staff count per faculty
 - Hostel space availability
 - Graduation outcomes
+- GDP growth rate
+- Annual Departmental/Faculty budget
+- Unemployment rate
+- Strike Duration
 
 ## Tools Used
 - Python (Pandas, NumPy, Scikit-learn)
