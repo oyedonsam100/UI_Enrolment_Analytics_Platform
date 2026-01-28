@@ -55,3 +55,6 @@ streamlit run app.py
 
 ## Deployment
 Use Streamlit Cloud: https://share.streamlit.io
+
+## Connect
+LinkedIn : [Samuel Oyedokun](https://www.linkedin.com/in/samuel-oyedokun-b41895142)
