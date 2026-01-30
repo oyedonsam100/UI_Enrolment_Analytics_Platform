@@ -1852,44 +1852,7 @@ def prediction_tool():
         - **Implementation roadmap** with actionable recommendations
         - **Downloadable detailed plan** for presentation to administrators
         """)
-    
-    # RESEARCH CONTEXT
-    st.markdown("---")
-    with st.expander("🎓 Research Context & Methodology"):
-        st.markdown("""
-        ### Research Foundation
         
-        This tool is developed as part of a **Master of Information Science (M.Info.Sci)** research project
-        at the University of Ibadan, investigating machine learning applications for enrolment prediction
-        and resource optimisation in Nigerian higher education.
-        
-        ### Model Performance
-        
-        **Enrolment Prediction Model:**
-        - Trained on historical data from 2014-2024
-        - Incorporates economic indicators, resource metrics, and institutional factors
-        - Provides indicative growth projections for planning purposes
-        
-        **Resource Allocation Model:**
-        - Analyses relationship between resources and graduation outcomes
-        - Considers staff ratios, budget efficiency, and disruption factors
-        - Supports evidence-based resource planning decisions
-        
-        ### Usage Guidelines
-        
-        - Predictions are indicative and should inform, not replace, expert judgment
-        - Consider institutional policies, admission quotas, and external factors
-        - Use scenario simulation to explore different resource allocation strategies
-        - Review predictions alongside historical trends and domain expertise
-        
-        ### Limitations
-        
-        - Cannot predict sudden policy changes or regulatory reforms
-        - Historical patterns may not reflect future structural changes
-        - External shocks (pandemics, major political events) fall outside model scope
-        - Best used for comparative analysis and scenario planning
-        """)
-    
     # Footer
     st.markdown("---")
     st.markdown("""
