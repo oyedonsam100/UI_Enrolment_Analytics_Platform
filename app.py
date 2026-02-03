@@ -1165,11 +1165,13 @@ def eda_dashboard():
                         trendline_color_override="red",
                         color_discrete_sequence=['#636EFA']
                     )
-                    # Remove labels from trendline
-                    fig.data[1].showlegend = False  # Hide trendline from legend
-                    fig.data[1].hovertemplate = None  # Remove hover labels from trendline
-                    fig.data[1].hoverinfo = 'skip'  # Skip hover info on trendline
-        
+                    # Completely disable trendline labels and hover
+                    for trace in fig.data:
+                        if trace.mode == 'lines':  # This is the trendline
+                            trace.showlegend = False
+                            trace.hoverinfo = 'skip'
+                            trace.hovertemplate = ''
+                            
                     fig.update_layout(height=500)
                     st.plotly_chart(fig, use_container_width=True)
                 else:
