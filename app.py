@@ -1166,7 +1166,6 @@ def eda_dashboard():
                         color_discrete_sequence=['#636EFA']
                     )
                     fig.update_layout(height=500)
-                    showlegend=False
                     st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.info(f"Cannot plot '{title}': missing column")
