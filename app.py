@@ -1165,6 +1165,12 @@ def eda_dashboard():
                         trendline_color_override="red",
                         color_discrete_sequence=['#636EFA']
                     )
+                    # REMOVE LABEL FROM TREND LINE
+                    fig.for_each_trace(
+                        lambda t: t.update(showlegend=False)
+                        if t.mode == "lines"
+                        else None
+                    )
                     fig.update_layout(height=500)
                     st.plotly_chart(fig, use_container_width=True)
                 else:
