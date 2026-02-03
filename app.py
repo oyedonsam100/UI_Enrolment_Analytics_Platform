@@ -542,7 +542,6 @@ def load_models():
             with open(model_files["metadata"], 'rb') as f:
                 metadata = pickle.load(f)
         
-        st.success("✅ All models loaded successfully!")
         return enroll_model, enroll_features, resource_model, resource_features, metadata
         
     except Exception as e:
