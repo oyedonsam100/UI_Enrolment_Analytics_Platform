@@ -1165,12 +1165,8 @@ def eda_dashboard():
                         trendline_color_override="red",
                         color_discrete_sequence=['#636EFA']
                     )
-                    #  REMOVE TRENDLINE LABEL (OLS)
-                    fig.update_traces(
-                        showlegend=False,
-                        selector=dict(name="OLS trendline")
-                    )
                     fig.update_layout(height=500)
+                    showlegend=False
                     st.plotly_chart(fig, use_container_width=True)
                 else:
                     st.info(f"Cannot plot '{title}': missing column")
