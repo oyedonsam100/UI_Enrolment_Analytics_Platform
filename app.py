@@ -743,7 +743,7 @@ def landing_page():
             <br>
             <p><strong>Predictions:</strong></p>
             <ul>
-                <li>5-year enrolment projections</li>
+                <li>1-year enrolment projections</li>
                 <li>Growth rate analysis</li>
                 <li>Uncertainty ranges</li>
                 <li>Faculty-level forecasts</li>
@@ -786,7 +786,7 @@ def landing_page():
         - Select faculty from hierarchical structure
         - Input current parameters and economic indicators
         - Get AI-powered enrolment growth predictions
-        - View 5-year forecasts with uncertainty ranges
+        - View 1-year forecasts with uncertainty ranges
         
         **3. Resource Planning**
         - Analyse resource allocation efficiency
