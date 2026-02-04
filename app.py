@@ -1730,8 +1730,9 @@ def prediction_tool():
         - **Optimal hiring plan** for year 1 (male/female breakdown)
         - **Budget allocation** across categories (salaries, infrastructure, teaching, research)
         - **Performance projections** (graduation rates, student-staff ratios)
-        - **Cost Benefits analysis** 
+        - **Cost-Benefits analysis** 
         - **Implementation roadmap** with actionable recommendations
+        - **Costraint Satisfaction** 
         - **Downloadable detailed plan** for presentation to administrators
         """)
         
