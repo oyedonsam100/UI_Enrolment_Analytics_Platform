@@ -1293,7 +1293,7 @@ def prediction_tool():
         """, unsafe_allow_html=True)
     
     
-    # SINGLE-YEAR PROJECTION (2026)
+    # SINGLE-YEAR PROJECTION
     st.markdown("---")
     st.header("📊 1-Year Enrolment Projection")
 
@@ -1674,19 +1674,6 @@ def prediction_tool():
                 <small style='color: #64748b;'>Students</small>
             </div>
             """, unsafe_allow_html=True)
-                
-        # Download button for detailed plan
-        st.markdown("### 📥 Export Optimisation Results")
-        
-        detailed_report = generate_optimization_report(optimal_plan, faculty, year)
-        
-        st.download_button(
-            label="📄 Download Detailed Implementation Plan (CSV)",
-            data=detailed_report,
-            file_name=f"optimal_resource_plan_{faculty}_{year}.csv",
-            mime="text/csv",
-            use_container_width=True
-        )
         
         # Implementation recommendations
         st.markdown("### ✅ Implementation Recommendations")
@@ -1719,6 +1706,19 @@ def prediction_tool():
                     st.warning(constraint)
             else:
                 st.success("✅ All constraints satisfied!")
+
+        # Download button for detailed plan
+        st.markdown("### 📥 Export Optimisation Results")
+        
+        detailed_report = generate_optimization_report(optimal_plan, faculty, year)
+        
+        st.download_button(
+            label="📄 Download Detailed Implementation Plan (CSV)",
+            data=detailed_report,
+            file_name=f"optimal_resource_plan_{faculty}_{year}.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
     
     else:
         # Show placeholder when optimization hasn't been run
@@ -1730,9 +1730,7 @@ def prediction_tool():
         - **Optimal hiring plan** for year 1 (male/female breakdown)
         - **Budget allocation** across categories (salaries, infrastructure, teaching, research)
         - **Performance projections** (graduation rates, student-staff ratios)
-        - **Cost-benefit analysis** with ROI calculations
         - **Sensitivity analysis** showing robustness of solutions
-        - **Alternative solutions** with different trade-offs
         - **Implementation roadmap** with actionable recommendations
         - **Downloadable detailed plan** for presentation to administrators
         """)
