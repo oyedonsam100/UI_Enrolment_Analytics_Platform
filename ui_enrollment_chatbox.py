@@ -1,6 +1,6 @@
 """
 Q&A Chatbox for University of Ibadan Enrollment Prediction System
-Customized for enrollment trends and resource optimization
+Fixed version with reliable question matching
 """
 
 import streamlit as st
@@ -13,185 +13,175 @@ import base64
 
 class UIEnrollmentChatbox:
     """
-    Q&A chatbox specifically for University of Ibadan's enrollment prediction 
-    and resource optimization platform.
+    Q&A chatbox for University of Ibadan's enrollment prediction platform.
     """
     
     def __init__(self):
         """Initialize the chatbox with UI-specific Q&A pairs."""
-        self.predefined_qa = {
-            # GENERAL QUESTIONS
-            "what is this": {
-                "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It's an AI-powered system that helps predict student enrollment trends and optimize resource allocation for better planning and decision-making.",
+        
+        # Use a list of (patterns, answer) instead of dictionary for better control
+        self.qa_patterns = [
+            # EXACT MATCHES FIRST (most reliable)
+            (["what is this", "what is this app", "what is this platform"], {
+                "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It helps predict student enrollment trends and optimize resource allocation using AI and machine learning.",
                 "category": "general"
-            },
-            "what is this app": {
-                "answer": "This platform provides three main features: 1) EDA Dashboard for exploring enrollment data, 2) AI-powered enrollment growth predictions, and 3) Resource optimization tools to help with staffing and budget planning at University of Ibadan.",
+            }),
+            
+            (["about", "about this app", "tell me about this", "what does this do"], {
+                "answer": "This platform provides three main features: 1) EDA Dashboard for exploring enrollment data with visualizations, 2) AI-powered enrollment predictions for forecasting growth, and 3) Resource optimization tools for planning staff and budget allocation.",
                 "category": "general"
-            },
-            "what is this platform": {
-                "answer": "This is a comprehensive analytics platform for University of Ibadan that combines data analysis, machine learning predictions, and optimization algorithms to forecast enrollment and plan resources effectively.",
+            }),
+            
+            (["what is enrollment", "define enrollment", "enrollment meaning"], {
+                "answer": "Enrollment is the total number of students admitted and registered at the university. This platform predicts future enrollment by analyzing historical trends, economic factors (GDP, unemployment), faculty capacity, budget, and policy factors like strike duration and hostel availability.",
                 "category": "general"
-            },
-            "about this app": {
-                "answer": "The UI Enrollment Platform helps university administrators make data-driven decisions by forecasting enrollment trends, predicting graduation rates, and recommending optimal resource allocation strategies.",
+            }),
+            
+            (["what is prediction", "what are predictions", "explain prediction"], {
+                "answer": "Predictions are AI-generated forecasts of future outcomes. This app makes two types: 1) Enrollment Growth Rate - predicting how enrollment will change (e.g., +5% next year), and 2) Graduation Rate - predicting what percentage of students will graduate based on current resources.",
                 "category": "general"
-            },
-            "what is enrollment": {
-                "answer": "Enrollment refers to the number of students admitted and registered at the university. This platform predicts enrollment growth rates based on historical data, economic indicators, faculty capacity, and policy factors.",
-                "category": "general"
-            },
-            "what is enrollment prediction": {
-                "answer": "Enrollment prediction uses machine learning to forecast how many students will enroll in future years. The system analyzes factors like GDP growth, unemployment rates, budget per student, and historical trends to make 1-year projections with uncertainty ranges.",
-                "category": "general"
-            },
-            "what is prediction": {
-                "answer": "Prediction in this app refers to forecasting future enrollment numbers and graduation rates using AI models trained on historical University of Ibadan data. Predictions include uncertainty ranges to show confidence levels.",
-                "category": "general"
-            },
-            "explain predictions": {
-                "answer": "The platform makes two types of predictions: 1) Enrollment Growth Rate - how much enrollment will change next year (e.g., +5.2%), and 2) Graduation Rate - what percentage of students are expected to graduate based on current resources.",
-                "category": "general"
-            },
+            }),
+            
+            (["what is enrollment prediction", "enrollment forecasting"], {
+                "answer": "Enrollment prediction uses machine learning models to forecast how many students will enroll next year. The system analyzes 10+ factors including GDP growth, unemployment rates, budget per student, student-staff ratios, and historical enrollment patterns to generate 1-year projections with uncertainty ranges.",
+                "category": "prediction"
+            }),
             
             # APP USAGE
-            "how do i use this app": {
-                "answer": "Navigate using the sidebar: Start with the EDA Dashboard to explore data, then use the Prediction Tool to forecast enrollment and optimize resources. Select your faculty, input parameters, and get AI-powered predictions.",
+            (["how do i use", "how to use", "how do i start", "getting started"], {
+                "answer": "Start by clicking 'EDA Dashboard' in the sidebar to explore enrollment data. Then go to 'Prediction Tool' to make forecasts. Select your faculty, input current parameters (enrollment, budget, staff), set economic indicators, and click buttons to generate predictions and optimization recommendations.",
                 "category": "usage"
-            },
-            "how to navigate": {
-                "answer": "Use the sidebar on the left: 🏠 Home for overview, 📊 EDA Dashboard for data exploration, 🎯 Prediction Tool for forecasts and optimization.",
-                "category": "usage"
-            },
-            "what can this platform do": {
-                "answer": "This platform provides: 1) Exploratory data analysis of enrollment trends, 2) AI-powered enrollment growth predictions, 3) Graduation rate forecasting, 4) Resource allocation optimization, and 5) Scenario simulations for planning.",
-                "category": "usage"
-            },
+            }),
             
-            # DATA REQUIREMENTS
-            "what data do i need": {
-                "answer": "For EDA: Upload CSV files with Year, Enrollment, Budget, Staff counts, and demographic data. For Predictions: Input current enrollment, budget, staff numbers, and economic indicators like GDP growth and unemployment rates.",
-                "category": "data"
-            },
-            "what format should data be": {
-                "answer": "Upload CSV files with columns like: YEAR, GENDER, FACULTY, DEPARTMENT, MODE_OF_ENTRY, ANNUAL_BUDGET_DEPT(₦), FAC_STAFF_COUNT_MALE, FAC_STAFF_COUNT_FEMALE, GDP_GROWTH_PERCENTAGE, UNEMPLOYMENT_RATE_PERCENTAGE.",
-                "category": "data"
-            },
-            "csv upload not working": {
-                "answer": "Try these solutions: 1) Re-save your file as 'CSV UTF-8' in Excel, 2) Use the 'Paste CSV Data' option instead, 3) Use 'Sample Data' to test the system, 4) Check file size is under 200MB, 5) Remove special characters from your data.",
-                "category": "data"
-            },
-            "sample data": {
-                "answer": "Click 'Use Sample Data' in the EDA Dashboard to load pre-configured enrollment data. This helps you explore features without uploading your own data first.",
-                "category": "data"
-            },
+            (["navigate", "navigation", "how to navigate"], {
+                "answer": "Use the sidebar menu on the left: 🏠 Home for overview, 📊 EDA Dashboard to analyze data, 🎯 Prediction Tool to forecast and optimize. Each section has clear instructions and input fields.",
+                "category": "usage"
+            }),
             
-            # ENROLLMENT PREDICTIONS
-            "how accurate are predictions": {
-                "answer": "Enrollment predictions show an uncertainty range (typically ±5-8 percentage points). Accuracy depends on data quality, economic stability, and policy consistency. The model is trained on historical UI data and macroeconomic indicators.",
+            # DATA
+            (["what data", "data needed", "data required", "data format"], {
+                "answer": "Upload CSV files with these columns: YEAR, GENDER, FACULTY, DEPARTMENT, MODE_OF_ENTRY, ENROLED, ANNUAL_BUDGET_DEPT(₦), FAC_STAFF_COUNT_MALE, FAC_STAFF_COUNT_FEMALE, HOSTEL_ALLOCATION_PROBABILITY, STRIKE_DURATION_MONTHS, GDP_GROWTH_PERCENTAGE, UNEMPLOYMENT_RATE_PERCENTAGE, DEPT_POST_UTME_CUT_OFF.",
+                "category": "data"
+            }),
+            
+            (["csv", "upload csv", "file upload", "upload data"], {
+                "answer": "In the EDA Dashboard, you have three options: 1) Upload CSV File - browse and select your file, 2) Use Sample Data - load pre-configured example data, or 3) Paste CSV Data - copy-paste your data directly. If upload fails, try re-saving as 'CSV UTF-8' format in Excel.",
+                "category": "data"
+            }),
+            
+            (["csv not working", "upload fails", "cant upload", "upload error"], {
+                "answer": "Common fixes: 1) Open file in Excel, Save As → 'CSV UTF-8', 2) Try the 'Paste CSV Data' option instead, 3) Use 'Sample Data' to test the system, 4) Check file is under 200MB, 5) Remove special characters from data.",
+                "category": "troubleshooting"
+            }),
+            
+            (["sample data", "test data", "demo data"], {
+                "answer": "Click 'Use Sample Data' in the EDA Dashboard to load pre-configured enrollment data. This lets you explore all features without uploading your own files. Great for testing and learning how the system works.",
+                "category": "data"
+            }),
+            
+            # PREDICTIONS
+            (["how accurate", "accuracy", "prediction accuracy"], {
+                "answer": "Predictions include uncertainty ranges (typically ±5-8 percentage points). For example, a 15% ±5pp prediction means growth could be 10-20%. Accuracy depends on data quality and economic stability. The models are trained on historical UI data.",
                 "category": "prediction"
-            },
-            "what affects enrollment growth": {
-                "answer": "Key factors include: GDP growth rate, unemployment rate, faculty demand, student-staff ratio, budget per student, strike duration, hostel availability, and Post-UTME cut-off marks. Economic conditions have the strongest impact.",
+            }),
+            
+            (["what affects enrollment", "enrollment factors", "factors affecting"], {
+                "answer": "Key factors: GDP growth rate (economic health), unemployment rate (job market), faculty demand (e.g., Science/Medicine are high-demand), student-staff ratio (capacity), budget per student (resources), strike duration (disruptions), hostel probability (accommodation), and Post-UTME cut-off marks.",
                 "category": "prediction"
-            },
-            "how far ahead can i predict": {
-                "answer": "The system provides 1-year enrollment projections. For longer-term planning, you can run multiple scenarios with different parameter assumptions.",
+            }),
+            
+            (["how far ahead", "forecast period", "prediction timeframe"], {
+                "answer": "The system provides 1-year enrollment projections. This is the most reliable timeframe for accurate predictions. For longer-term planning (3-5 years), you can run multiple scenarios with different assumptions about economic conditions and policy changes.",
                 "category": "prediction"
-            },
-            "what is uncertainty range": {
-                "answer": "The uncertainty range (±X pp) shows the confidence interval for predictions. For example, a 15% ±5pp prediction means enrollment growth could be between 10-20%. Larger ranges indicate higher uncertainty.",
+            }),
+            
+            (["uncertainty range", "confidence interval", "prediction range"], {
+                "answer": "The uncertainty range (±X pp) shows the confidence interval. Example: 15% ±5pp means enrollment growth could be 10-20%. Larger ranges indicate higher uncertainty due to volatile economic conditions or limited historical data.",
                 "category": "prediction"
-            },
+            }),
             
             # GRADUATION RATES
-            "graduation rate prediction": {
-                "answer": "The system predicts graduation rates based on student-staff ratio, budget per student, faculty size, and resource allocation. Rates are adjusted for small faculties and compared against the national average (65%) and NUC target (85%).",
+            (["graduation rate", "graduation prediction"], {
+                "answer": "The system predicts graduation rates based on student-staff ratio, budget per student, faculty size, and resource quality. Predictions are compared against the national average (65%) and NUC target (85%). Small faculties get automatic adjustments for their unique characteristics.",
                 "category": "graduation"
-            },
-            "how to improve graduation rate": {
-                "answer": "Key strategies: 1) Reduce student-staff ratio below 20:1, 2) Increase budget per student above ₦60,000, 3) Hire additional qualified lecturers, 4) Minimize academic disruptions (strikes), 5) Use the optimization tool to find optimal resource allocation.",
-                "category": "graduation"
-            },
+            }),
             
-            # RESOURCE OPTIMIZATION
-            "how does optimization work": {
-                "answer": "The optimizer uses differential evolution to find the best balance of staff hiring and budget allocation. It maximizes graduation rates while staying within budget limits, maintaining acceptable student-staff ratios, and achieving gender balance targets (30-50% female staff).",
+            (["improve graduation", "increase graduation rate"], {
+                "answer": "To improve graduation rates: 1) Reduce student-staff ratio to below 20:1, 2) Increase budget per student above ₦60,000, 3) Hire qualified lecturers, 4) Minimize disruptions (strikes), 5) Use the optimization tool to find the best resource allocation strategy.",
+                "category": "graduation"
+            }),
+            
+            # OPTIMIZATION
+            (["how optimization works", "optimization algorithm"], {
+                "answer": "The optimizer uses differential evolution to find the best hiring and budget allocation plan. It maximizes graduation rates while staying within your budget limit, maintaining good student-staff ratios (15-25:1), and achieving gender balance (30-50% female staff).",
                 "category": "optimization"
-            },
-            "what resources can be optimized": {
-                "answer": "The system optimizes: 1) Number of new lecturers to hire (male/female split), 2) Budget allocation across salaries and infrastructure, 3) Timing of hires, 4) Resource distribution to meet graduation rate targets.",
+            }),
+            
+            (["what to optimize", "optimize what", "resources optimize"], {
+                "answer": "You can optimize: 1) Number of new lecturers to hire (male/female breakdown), 2) Budget allocation across salaries, infrastructure, teaching materials, and research, 3) Timing of hires across years, 4) Resource distribution to achieve target graduation rates.",
                 "category": "optimization"
-            },
-            "optimization parameters": {
-                "answer": "Set three key parameters: 1) Maximum Additional Budget (available funds), 2) Target Graduation Rate (desired outcome, 75-95%), 3) Maximum Student-Staff Ratio (quality threshold, typically 15-25:1).",
+            }),
+            
+            (["optimization parameters", "what to set"], {
+                "answer": "Set three parameters: 1) Maximum Additional Budget - total funds available (₦), 2) Target Graduation Rate - desired outcome (75-95%), 3) Maximum Student-Staff Ratio - quality threshold (typically 15-25:1). Then click 'Run Optimization'.",
                 "category": "optimization"
-            },
-            "how long does optimization take": {
-                "answer": "Optimization typically runs for 10-30 seconds. The algorithm evaluates thousands of possible solutions to find the best resource allocation strategy.",
+            }),
+            
+            (["optimization time", "how long", "optimization speed"], {
+                "answer": "Optimization typically takes 10-30 seconds. The algorithm evaluates thousands of possible solutions using differential evolution to find the optimal staff hiring and budget allocation strategy for your constraints.",
                 "category": "optimization"
-            },
+            }),
             
             # SCENARIO SIMULATION
-            "what is scenario simulation": {
-                "answer": "Scenario simulation lets you test 'what-if' situations. Adjust the number of additional lecturers and budget increase percentage to see projected impacts on student-staff ratio, budget per student, and graduation rate.",
+            (["scenario simulation", "what if analysis", "simulation"], {
+                "answer": "Scenario simulation lets you test 'what-if' situations. Adjust sliders for additional lecturers (0-500) and budget increase (-20% to +100%) to see immediate impacts on student-staff ratio, budget per student, and graduation rate projections.",
                 "category": "simulation"
-            },
-            "how to use simulation": {
-                "answer": "In the Prediction Tool, scroll to 'Scenario Simulation'. Use sliders to set additional lecturers (0-500) and budget increase (-20% to +100%). Results update immediately showing projected metrics.",
-                "category": "simulation"
-            },
+            }),
             
-            # FACULTIES AND DEPARTMENTS
-            "which faculties are included": {
-                "answer": "All 16 UI faculties: Agriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, and Veterinary Medicine.",
+            # FACULTIES
+            (["faculties", "which faculties", "list of faculties"], {
+                "answer": "All 16 UI faculties are included: Agriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design & Management, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, and Veterinary Medicine.",
                 "category": "structure"
-            },
-            "how to select department": {
-                "answer": "Currently, predictions are made at the faculty level. Select your faculty from the sidebar dropdown in the Prediction Tool. Department-level analysis can be done in the EDA Dashboard if your uploaded data includes department information.",
+            }),
+            
+            (["departments", "select department"], {
+                "answer": "Predictions are made at the faculty level. Select your faculty from the sidebar dropdown in Prediction Tool. For department-level analysis, use the EDA Dashboard if your uploaded data includes department information in the DEPARTMENT column.",
                 "category": "structure"
-            },
+            }),
             
             # ECONOMIC INDICATORS
-            "what are economic indicators": {
-                "answer": "GDP Growth Rate measures economic expansion (typically -5% to +10% in Nigeria). Unemployment Rate reflects job market conditions (0-40%). Both significantly influence enrollment decisions as higher GDP and lower unemployment correlate with increased enrollment.",
+            (["economic indicators", "gdp unemployment"], {
+                "answer": "GDP Growth Rate measures economic expansion (typically -5% to +10% in Nigeria, current ~2.5%). Unemployment Rate reflects job market conditions (current ~20%). Both strongly influence enrollment - higher GDP and lower unemployment typically increase enrollment.",
                 "category": "economics"
-            },
-            "how to set economic indicators": {
-                "answer": "In the Prediction Tool sidebar, adjust: 1) GDP Growth Rate slider (current Nigerian average ~2.5%), 2) Unemployment Rate slider (current ~20%), 3) Use recent official statistics from NBS for accuracy.",
-                "category": "economics"
-            },
+            }),
             
-            # REPORTS AND EXPORTS
-            "how to download results": {
-                "answer": "After running optimization, click '📄 Download Detailed Implementation Plan (CSV)' to export a comprehensive report including hiring plan, budget breakdown, yearly implementation schedule, and recommendations.",
+            (["set indicators", "input economic data"], {
+                "answer": "In Prediction Tool sidebar, adjust: 1) GDP Growth Rate slider (use recent NBS statistics, default 2.5%), 2) Unemployment Rate slider (current average ~20%). These critically affect enrollment predictions, so use accurate current data for best results.",
+                "category": "economics"
+            }),
+            
+            # EXPORTS
+            (["download", "export results", "save report"], {
+                "answer": "After running optimization, click '📄 Download Detailed Implementation Plan (CSV)' button. This exports a comprehensive report with hiring plans, budget breakdown, yearly schedule, immediate actions, long-term strategies, and constraint satisfaction analysis.",
                 "category": "export"
-            },
-            "what's in the export": {
-                "answer": "The CSV export contains: Summary metrics, year-by-year implementation plan, budget breakdown, immediate actions, long-term strategies, and constraint satisfaction analysis.",
+            }),
+            
+            (["whats in export", "export contents"], {
+                "answer": "The CSV export contains: Summary metrics (staff, budget, graduation rates), year-by-year implementation plan, budget breakdown by category, immediate actions for Year 1, long-term strategies for Years 2-5, and analysis of which constraints were met or challenged.",
                 "category": "export"
-            },
+            }),
             
             # TROUBLESHOOTING
-            "models not loading": {
-                "answer": "Ensure all 5 .pkl model files are in the 'models' folder: ui_enrollment_features.pkl, ui_enrollment_prediction_model.pkl, ui_resource_allocation_model.pkl, ui_resource_features.pkl, ui_system_metadata.pkl.",
+            (["models not loading", "model error", "pkl error"], {
+                "answer": "Ensure all 5 .pkl model files are in the 'models' folder: ui_enrollment_features.pkl, ui_enrollment_prediction_model.pkl, ui_resource_allocation_model.pkl, ui_resource_features.pkl, ui_system_metadata.pkl. Check the models folder is in the same directory as app.py.",
                 "category": "troubleshooting"
-            },
-            "predictions seem wrong": {
-                "answer": "Check: 1) Input parameters are realistic, 2) Faculty selection is correct, 3) Economic indicators match current conditions, 4) Current enrollment and staff numbers are accurate. Predictions include uncertainty ranges to account for variability.",
-                "category": "troubleshooting"
-            },
+            }),
             
-            # PLANNING AND IMPLEMENTATION
-            "how to use predictions for planning": {
-                "answer": "Use predictions to: 1) Forecast infrastructure needs, 2) Plan recruitment cycles, 3) Request budget allocations, 4) Set admission targets, 5) Prepare for capacity expansion. Export optimization results for administrative presentations.",
-                "category": "planning"
-            },
-            "immediate vs long-term actions": {
-                "answer": "Immediate actions (Year 1) focus on hiring, budget allocation, and orientation. Long-term strategies address sustained growth, quality assurance, faculty development, and infrastructure planning over 3-5 years.",
-                "category": "planning"
-            },
-        }
+            (["predictions wrong", "incorrect predictions", "bad predictions"], {
+                "answer": "Verify: 1) Input parameters are realistic (check enrollment, budget, staff numbers), 2) Faculty selection is correct, 3) Economic indicators match current conditions (GDP ~2.5%, unemployment ~20%), 4) Remember predictions include uncertainty ranges showing possible variation.",
+                "category": "troubleshooting"
+            }),
+        ]
         
         # Initialize session state
         if 'ui_chat_history' not in st.session_state:
@@ -200,192 +190,103 @@ class UIEnrollmentChatbox:
             st.session_state.ui_chat_context = {}
     
     def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
-        """Search for predefined answers using improved keyword matching."""
-        question_lower = question.lower().strip()
+        """
+        Find matching answer using simple, reliable pattern matching.
+        """
+        question_lower = question.lower().strip().replace('?', '').replace('!', '').replace('.', '')
         
-        # Remove question marks and extra spaces
-        question_lower = question_lower.replace('?', '').strip()
+        # Try each pattern
+        for patterns, answer_data in self.qa_patterns:
+            for pattern in patterns:
+                # Direct substring match (most reliable)
+                if pattern in question_lower:
+                    return answer_data
         
-        # Exact match first
-        if question_lower in self.predefined_qa:
-            return self.predefined_qa[question_lower]
-        
-        # Check if the full key phrase appears in the question (most accurate)
-        for key, value in self.predefined_qa.items():
-            if key in question_lower:
-                return value
-        
-        # Keyword matching with better scoring
-        best_match = None
-        best_score = 0
-        min_threshold = 3  # Require at least 3 matching words
-        
+        # If no match, try keyword-based matching as last resort
         question_words = set(question_lower.split())
         
-        # Filter out common words that shouldn't count
+        # Remove common words
         stop_words = {'is', 'are', 'the', 'a', 'an', 'what', 'how', 'why', 'when', 
-                      'where', 'can', 'do', 'does', 'this', 'that', 'i', 'my', 'me'}
+                      'where', 'can', 'do', 'does', 'did', 'this', 'that', 'these',
+                      'i', 'my', 'me', 'you', 'your', 'it', 'its', 'to', 'for', 'of'}
         question_words = question_words - stop_words
         
-        for key, value in self.predefined_qa.items():
-            key_words = set(key.split()) - stop_words
-            
-            # Calculate overlap
-            overlap = len(question_words.intersection(key_words))
-            
-            # Calculate match percentage (more important for short questions)
-            if len(question_words) > 0:
-                match_percentage = overlap / len(question_words)
-            else:
-                match_percentage = 0
-            
-            # Scoring: prioritize high match percentage and overlap
-            score = overlap + (match_percentage * 2)
-            
-            # Require minimum overlap AND good match percentage
-            if score > best_score and overlap >= min(min_threshold, len(key_words)):
-                # Additional check: avoid matching if key is much longer than question
-                # (e.g., "prediction" shouldn't match "what is uncertainty range")
-                if len(key_words) <= len(question_words) * 2:
-                    best_score = score
-                    best_match = value
+        if len(question_words) == 0:
+            return None
         
-        # Only return if we have a strong match
-        if best_score >= min_threshold:
-            return best_match
+        best_match = None
+        best_score = 0
         
-        return None
+        for patterns, answer_data in self.qa_patterns:
+            for pattern in patterns:
+                pattern_words = set(pattern.split()) - stop_words
+                if len(pattern_words) == 0:
+                    continue
+                
+                overlap = len(question_words.intersection(pattern_words))
+                
+                # Only consider if significant overlap
+                if overlap >= 2 and overlap >= len(pattern_words) * 0.6:
+                    score = overlap / len(pattern_words)
+                    if score > best_score:
+                        best_score = score
+                        best_match = answer_data
+        
+        return best_match if best_score > 0.5 else None
     
     def _generate_fallback_response(self, question: str) -> str:
-        """Generate helpful fallback response when no match is found."""
-        
-        # Analyze question to provide relevant suggestions
+        """Generate helpful fallback when no match found."""
         question_lower = question.lower()
         
-        # Check for topic keywords
-        if any(word in question_lower for word in ['data', 'upload', 'csv', 'file', 'format']):
-            return """**Data & Upload Help:** I can help with data-related questions! Try asking:
-            
-- "What data do I need?"
-- "What format should data be?"
-- "CSV upload not working"
-- "How to use sample data?"
+        # Topic detection
+        if any(word in question_lower for word in ['data', 'upload', 'csv', 'file']):
+            return """**Need help with data?** Try asking:
 
-Or navigate to the **EDA Dashboard** to upload and explore your data."""
+• "What data do I need?"
+• "How to upload CSV?"
+• "CSV not working"
+
+Or go to **EDA Dashboard** → Upload your data"""
         
-        elif any(word in question_lower for word in ['predict', 'forecast', 'enrollment', 'growth']):
-            return """**Enrollment Predictions:** I can help with prediction questions! Try asking:
+        elif any(word in question_lower for word in ['enroll', 'forecast', 'growth']):
+            return """**Need help with predictions?** Try asking:
 
-- "How accurate are predictions?"
-- "What affects enrollment growth?"
-- "How far ahead can I predict?"
-- "What is uncertainty range?"
+• "How accurate are predictions?"
+• "What affects enrollment?"
+• "What is enrollment prediction?"
 
-Or go to the **Prediction Tool** to generate forecasts."""
+Or go to **Prediction Tool** → Generate forecasts"""
         
-        elif any(word in question_lower for word in ['optimize', 'resource', 'staff', 'budget', 'hire']):
-            return """**Resource Optimization:** I can help with optimization! Try asking:
+        elif any(word in question_lower for word in ['optimize', 'resource', 'staff', 'budget']):
+            return """**Need help with optimization?** Try asking:
 
-- "How does optimization work?"
-- "What resources can be optimized?"
-- "How to improve graduation rate?"
-- "Optimization parameters"
+• "How does optimization work?"
+• "What can I optimize?"
+• "How to improve graduation rate?"
 
-Or use the **Prediction Tool** and scroll to the optimization section."""
+Or use **Prediction Tool** → Scroll to optimization section"""
         
-        elif any(word in question_lower for word in ['faculty', 'faculties', 'department']):
-            return """**University Structure:** I can help with organizational questions! Try asking:
+        elif any(word in question_lower for word in ['faculty', 'department']):
+            return """**Need help with faculties?** Try asking:
 
-- "Which faculties are included?"
-- "How to select department?"
+• "Which faculties are included?"
+• "How to select department?"
 
-**Available Faculties:** Agriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, Veterinary Medicine."""
-        
-        elif any(word in question_lower for word in ['graduation', 'graduate', 'rate']):
-            return """**Graduation Rates:** I can help with graduation-related questions! Try:
-
-- "Graduation rate prediction"
-- "How to improve graduation rate?"
-
-The system predicts graduation rates based on student-staff ratios, budget per student, and resource allocation."""
-        
-        elif any(word in question_lower for word in ['error', 'not working', 'problem', 'issue', 'fix']):
-            return """**Troubleshooting:** I can help! Try asking:
-
-- "Models not loading"
-- "CSV upload not working"
-- "Predictions seem wrong"
-
-Or describe your specific issue and I'll try to help!"""
+**16 Faculties Available:** Agriculture, Arts, Sciences, Engineering, Medicine, Law, and more."""
         
         else:
-            # General fallback
-            return """I'm here to help with University of Ibadan enrollment predictions and resource optimization! 
+            return """**I can help with:**
 
-**Popular topics I can help with:**
-
-📊 **App Usage:** "How do I use this app?"
-📁 **Data:** "What data do I need?"
+📊 **App Usage:** "How do I use this?"
+📁 **Data:** "What data format?"
 🎯 **Predictions:** "How accurate are predictions?"
 💰 **Optimization:** "How does optimization work?"
 🏛️ **Faculties:** "Which faculties are included?"
 
-**Or try:**
-- Click the quick question buttons below
-- Ask about a specific feature you see on the page
-- Describe what you're trying to do
-
-What would you like to know?"""
-    
-    def get_ai_response(self, question: str, context: Dict[str, Any]) -> str:
-        """
-        Generate AI-powered response using context from the app.
-        
-        To enable AI responses, integrate with Anthropic Claude or OpenAI:
-        
-        import anthropic
-        client = anthropic.Anthropic(api_key=st.secrets["ANTHROPIC_API_KEY"])
-        
-        message = client.messages.create(
-            model="claude-sonnet-4-20250514",
-            max_tokens=1024,
-            system="You are a helpful assistant for University of Ibadan's enrollment prediction system...",
-            messages=[{
-                "role": "user",
-                "content": f"Context: {context_str}\n\nQuestion: {question}"
-            }]
-        )
-        return message.content[0].text
-        """
-        
-        # Build context string
-        context_info = []
-        
-        if context.get('current_page'):
-            context_info.append(f"User is on: {context.get('current_page')}")
-        
-        if context.get('selected_faculty'):
-            context_info.append(f"Selected faculty: {context.get('selected_faculty')}")
-        
-        if context.get('current_enrollment'):
-            context_info.append(f"Current enrollment: {context.get('current_enrollment'):,} students")
-        
-        if context.get('projected_enrollment'):
-            context_info.append(f"Projected enrollment: {context.get('projected_enrollment'):,} students")
-        
-        if context.get('predicted_growth_rate'):
-            context_info.append(f"Predicted growth: {context.get('predicted_growth_rate'):.1f}%")
-        
-        if context.get('graduation_rate'):
-            context_info.append(f"Expected graduation rate: {context.get('graduation_rate'):.1f}%")
-        
-        context_str = ". ".join(context_info) if context_info else "No specific context available"
-        
-        # Placeholder response - replace with actual AI API call
-        return f"**AI Assistant:** I understand you're asking about '{question}'. Based on the current state ({context_str}), I'm here to help with enrollment predictions and resource optimization for University of Ibadan. [To enable full AI responses, add your API key to .streamlit/secrets.toml]"
+**What would you like to know?**"""
     
     def add_message(self, role: str, content: str, metadata: Optional[Dict] = None):
-        """Add a message to chat history."""
+        """Add message to chat history."""
         message = {
             "role": role,
             "content": content,
@@ -395,24 +296,17 @@ What would you like to know?"""
         st.session_state.ui_chat_history.append(message)
     
     def save_chat_history(self):
-        """Save chat history to a downloadable JSON file."""
+        """Save chat history to JSON."""
         chat_data = {
             "university": "University of Ibadan",
             "export_date": datetime.now().isoformat(),
-            "context": st.session_state.ui_chat_context,
             "messages": st.session_state.ui_chat_history
         }
         return json.dumps(chat_data, indent=2)
     
     def render(self, app_context: Optional[Dict[str, Any]] = None, compact: bool = False):
-        """
-        Render the chatbox UI.
+        """Render the chatbox UI."""
         
-        Args:
-            app_context: Dictionary containing app state and data
-            compact: If True, render in compact mode for sidebar
-        """
-        # Update context
         if app_context:
             st.session_state.ui_chat_context.update(app_context)
         
@@ -422,12 +316,12 @@ What would you like to know?"""
         else:
             st.markdown("#### 💬 Q&A")
         
-        # Chat controls
+        # Controls
         if not compact:
-            col1, col2, col3 = st.columns([2, 1, 1])
+            col1, col2 = st.columns([3, 1])
             
             with col1:
-                if st.button("🗑️ Clear Chat", key="clear_chat_main"):
+                if st.button("🗑️ Clear Chat", key="clear_ui_chat"):
                     st.session_state.ui_chat_history = []
                     st.rerun()
             
@@ -437,67 +331,55 @@ What would you like to know?"""
                     st.download_button(
                         label="📥 Export",
                         data=chat_json,
-                        file_name=f"ui_chat_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+                        file_name=f"chat_{datetime.now().strftime('%Y%m%d_%H%M')}.json",
                         mime="application/json"
                     )
         
-        # Chat display area
+        # Chat display
         chat_container = st.container()
         
         with chat_container:
-            # Limit displayed messages in compact mode
             messages_to_show = st.session_state.ui_chat_history[-5:] if compact else st.session_state.ui_chat_history
             
             if not messages_to_show and not compact:
-                st.info("👋 Hi! I'm your UI Enrollment Assistant. Ask me anything about enrollment predictions, resource optimization, or using the platform.")
+                st.info("👋 **Hi! I'm your UI Enrollment Assistant.**\n\nAsk me anything about enrollment predictions, data analysis, or resource optimization.")
             
             for msg in messages_to_show:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
         
         # Chat input
-        user_question = st.chat_input("Ask about enrollment predictions, data, or resource optimization...")
+        user_question = st.chat_input("Ask about enrollment, predictions, or optimization...")
         
         if user_question:
-            # Add user message
             self.add_message("user", user_question)
             
-            # Display user message
             with st.chat_message("user"):
                 st.markdown(user_question)
             
-            # Generate response
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
-                    # Try predefined answers first
                     predefined = self.find_predefined_answer(user_question)
                     
                     if predefined:
                         response = f"**{predefined['category'].title()}:** {predefined['answer']}"
                         metadata = {"source": "predefined", "category": predefined['category']}
                     else:
-                        # Check if we should try AI or provide helpful fallback
-                        if hasattr(st, 'secrets') and 'ANTHROPIC_API_KEY' in st.secrets:
-                            # AI is configured, use it
-                            response = self.get_ai_response(user_question, st.session_state.ui_chat_context)
-                            metadata = {"source": "ai"}
-                        else:
-                            # No AI configured, provide helpful fallback
-                            response = self._generate_fallback_response(user_question)
-                            metadata = {"source": "fallback"}
+                        response = self._generate_fallback_response(user_question)
+                        metadata = {"source": "fallback"}
                     
                     st.markdown(response)
                     self.add_message("assistant", response, metadata)
             
             st.rerun()
         
-        # Quick action buttons
+        # Quick questions
         if not compact:
             st.markdown("---")
             st.markdown("**Quick Questions:**")
             
             quick_questions = [
-                "How do I use this app?",
+                "What is this app?",
                 "What data do I need?",
                 "How accurate are predictions?",
                 "How does optimization work?"
@@ -511,25 +393,12 @@ What would you like to know?"""
                         predefined = self.find_predefined_answer(qq)
                         if predefined:
                             response = f"**{predefined['category'].title()}:** {predefined['answer']}"
-                            self.add_message("assistant", response, {"source": "predefined", "category": predefined['category']})
+                            self.add_message("assistant", response, {"source": "predefined"})
                         st.rerun()
 
 
-# Convenience function for easy integration
 def render_ui_chatbox(app_context: Optional[Dict[str, Any]] = None, compact: bool = False):
-    """
-    Convenience function to render the chatbox.
-    
-    Usage:
-        from ui_enrollment_chatbox import render_ui_chatbox
-        
-        # In your app
-        render_ui_chatbox({
-            'current_page': 'Prediction Tool',
-            'selected_faculty': 'SCIENCE',
-            'current_enrollment': 4000
-        })
-    """
+    """Convenience function to render the chatbox."""
     if 'ui_chatbox' not in st.session_state:
         st.session_state.ui_chatbox = UIEnrollmentChatbox()
     
