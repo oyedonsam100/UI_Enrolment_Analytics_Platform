@@ -18,7 +18,7 @@ class UIEnrollmentChatbox:
                 "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It forecasts future undergraduate enrollment using machine learning and recommends optimal lecturer hiring and budget allocation to improve graduation rates."
             }),
             (["who created this", "who developed this app"], {
-                "answer": "This platform was developed as part of a PhD research project at the University of Ibadan focused on data-driven planning in Nigerian public universities."
+                "answer": "This platform was developed as part of a M.Info.SCi. research project at the University of Ibadan focused on data-driven planning in Nigerian public universities."
             }),
             (["what problem does it solve", "purpose of the app"], {
                 "answer": "It helps UI administrators forecast volatile enrollment and make evidence-based decisions on staffing and budgeting — reducing overcrowding, under-utilization and inefficient resource use."
@@ -161,6 +161,52 @@ class UIEnrollmentChatbox:
             }),
             (["post positivism", "research philosophy"], {
                 "answer": "The study adopts a post-positivist paradigm — acknowledging that knowledge is fallible but can be advanced through rigorous empirical methods and model validation."
+            }),
+            
+            # ──────────────────────────────────────────────────────────────
+            # NEW: EDA & DATA ANALYSIS CONCEPTS (added here)
+            # ──────────────────────────────────────────────────────────────
+            (["what is eda", "what is exploratory data analysis", "define eda"], {
+                "answer": "EDA (Exploratory Data Analysis) is the process of analyzing datasets to summarize their main characteristics — usually with visualizations (histograms, box plots, scatter plots) and statistics — before building predictive models. In this app, the EDA Dashboard helps you understand enrollment patterns, trends and outliers."
+            }),
+            (["what is distribution", "data distribution", "explain distribution"], {
+                "answer": "Distribution describes how values in a dataset are spread out. Common types include normal (bell-shaped), skewed (left or right), uniform, bimodal. In enrollment data, we often see right-skewed distributions due to occasional large spikes in admission numbers."
+            }),
+            (["what is skewness", "skewed distribution", "positive negative skew"], {
+                "answer": "Skewness measures asymmetry in the distribution. Positive skew (right-skewed) means a long tail on the right (higher values); negative skew means long tail on the left. Enrollment data is often positively skewed because of occasional enrollment surges."
+            }),
+            (["what is kurtosis", "leptokurtic platykurtic"], {
+                "answer": "Kurtosis measures the 'tailedness' or outlier-proneness of a distribution. High kurtosis (leptokurtic) = heavy tails & more outliers; low kurtosis (platykurtic) = light tails. Enrollment anomalies (e.g. post-strike rebounds) can increase kurtosis."
+            }),
+            (["what is correlation", "correlation coefficient", "pearson correlation"], {
+                "answer": "Correlation measures the strength and direction of the linear relationship between two variables (e.g. budget per student and graduation rate). Pearson correlation ranges from -1 (perfect negative) to +1 (perfect positive). In this research, we found strong negative correlation between student-staff ratio and graduation rate."
+            }),
+            (["what is outlier", "outliers in data", "how to detect outliers"], {
+                "answer": "An outlier is a data point significantly different from others (e.g. unusually high enrollment in one year). We detect them using IQR method or z-scores. In UI enrollment data, outliers often come from policy changes or major strikes."
+            }),
+            (["what is missing data", "missing values", "how to handle missing data"], {
+                "answer": "Missing data occurs when values are absent (e.g. unreported budget for some years). We handle it using imputation: median for numerical variables, mode for categorical, or advanced methods like KNN imputation if needed."
+            }),
+            (["what is feature engineering", "feature creation"], {
+                "answer": "Feature engineering is creating new meaningful variables from raw data to improve model performance — e.g. calculating student-staff ratio, budget per student, or lag features from previous years' enrollment."
+            }),
+            (["what is data preprocessing", "data preparation steps"], {
+                "answer": "Data preprocessing includes cleaning (remove duplicates, fix errors), handling missing values, encoding categorical variables, scaling/normalizing numerical features, and splitting data into train/test sets — all essential before training models."
+            }),
+            (["what is normalization", "what is standardization", "scaling data"], {
+                "answer": "Normalization scales features to a fixed range (usually 0–1). Standardization transforms features to have mean=0 and standard deviation=1. Both help machine learning algorithms (especially distance-based ones) perform better."
+            }),
+            (["categorical vs numerical data", "types of data"], {
+                "answer": "Numerical data has meaningful numbers (enrollment count, budget). Categorical data represents groups/categories (faculty name, gender, mode of entry). We use one-hot or label encoding for categorical variables before modeling."
+            }),
+            (["what is time series data", "time series in enrollment"], {
+                "answer": "Time series data is collected over time with order mattering (e.g. yearly enrollment from 2014–2024). Enrollment forecasting is a time-series problem — that's why we tested LSTM, though Random Forest performed better on our dataset."
+            }),
+            (["why use visualizations in eda", "importance of plots"], {
+                "answer": "Visualizations (histograms, box plots, scatter plots, heatmaps) reveal patterns, trends, outliers, correlations, and data quality issues that are hard to see in raw numbers alone."
+            }),
+            (["what is histogram", "what is box plot"], {
+                "answer": "Histogram shows the frequency distribution of a numerical variable. Box plot summarizes data with median, quartiles, and outliers — very useful for seeing enrollment spread across years or faculties."
             }),
         ]
 
