@@ -585,6 +585,10 @@ def render_sidebar():
         total_depts = sum(len(depts) for depts in UNIVERSITY_STRUCTURE.values())
         st.metric("Departments", total_depts)
         
+        st.markdown("---")
+        st.markdown("### 💬 Ask Questions")
+        render_ui_chatbox(compact=True)
+        
 # --------------------------------------------------
 # LANDING PAGE
 # --------------------------------------------------
