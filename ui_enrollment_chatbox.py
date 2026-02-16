@@ -166,6 +166,8 @@ class UIEnrollmentChatbox:
 # ──────────────────────────────────────────────────────────────
             # EDA & DATA ANALYSIS CONCEPTS — placed high for priority matching
             # ──────────────────────────────────────────────────────────────
+    def __init__(self):
+        self.qa_patterns = [
             (["what is eda", "eda", "what is exploratory data analysis", "define eda", "exploratory data analysis"], {
                 "answer": "EDA stands for Exploratory Data Analysis. It is the initial step of analyzing datasets using statistics and visualizations (histograms, box plots, scatter plots, correlation heatmaps) to discover patterns, detect outliers, check distributions, and understand relationships before building predictive models. In this app, the EDA Dashboard lets you visually explore enrollment trends and data quality."
             }),
@@ -208,23 +210,6 @@ class UIEnrollmentChatbox:
             (["what is histogram", "what is box plot"], {
                 "answer": "Histogram shows frequency distribution of a variable. Box plot displays median, quartiles, and outliers — great for seeing enrollment spread across faculties or years."
             }),
-
-            # ──────────────────────────────────────────────────────────────
-            # Core app & enrollment questions (your original high-priority ones)
-            # ──────────────────────────────────────────────────────────────
-            (["what is this app", "what is this platform", "what does this app do"], {
-                "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It forecasts future undergraduate enrollment using machine learning and recommends optimal lecturer hiring and budget allocation to improve graduation rates."
-            }),
-            (["what is enrollment", "define enrollment", "enrollment meaning"], {
-                "answer": "Enrollment is the total number of full-time undergraduate students officially admitted and registered at UI for a given academic session."
-            }),
-            (["what is enrollment prediction", "enrollment forecasting"], {
-                "answer": "Enrollment prediction uses machine learning to estimate how many students will enroll at UI in the next academic year based on historical patterns and influencing variables."
-            }),
-            # ... (add back your other original patterns here — I kept only a few for brevity in this example)
-
-            # Add all your other patterns below this line...
-            # (resource optimization, algorithms, Nigerian context, etc.)
         ]
 
         # Session state initialization
