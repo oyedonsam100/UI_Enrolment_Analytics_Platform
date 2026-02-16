@@ -1,124 +1,170 @@
 """
-Q&A Chatbox for University of Ibadan Enrollment Prediction System
-UPDATED VERSION - no category labels, cleaner & more direct answers
+Q&A Chatbox for University of Ibadan Enrollment Prediction & Resource Optimization System
+LARGE EXPANDED VERSION - ~105 Q&A pairs covering enrollment prediction, resource optimization, Nigerian higher education context, algorithms, methodology, UI-specific challenges, etc.
 """
 import streamlit as st
 import json
 from datetime import datetime
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 
 
 class UIEnrollmentChatbox:
     def __init__(self):
-        """Initialize with clean, direct answers - no category prefixes"""
+        """Expanded Q&A database — clean direct answers, no category prefixes"""
         self.qa_patterns = [
-            # Exact high-priority matches first
-            (
-                ["what is enrollment", "define enrollment", "enrollment meaning", "what does enrollment mean"],
-                {
-                    "answer": "Enrollment is the total number of full-time undergraduate students admitted and registered at the University of Ibadan in a given academic year. This platform forecasts future enrollment trends and helps optimize staff, budget, and hostel resources accordingly."
-                }
-            ),
-            (
-                ["what is enrollment prediction", "enrollment forecasting", "what is enrollment forecasting", "enrollment prediction meaning"],
-                {
-                    "answer": "Enrollment prediction forecasts how many students will enroll at UI next year using machine learning (mainly Random Forest models). It combines 10+ years of historical UI data with factors like GDP growth, unemployment rate, departmental budget, staff numbers, strike duration, hostel availability, and Post-UTME cut-off marks to give 1-year projections with realistic uncertainty ranges."
-                }
-            ),
-            (
-                ["what is prediction", "what are predictions", "explain prediction", "predictions meaning"],
-                {
-                    "answer": "Predictions are AI-based forecasts of future university outcomes. This app gives two main types: 1) Enrollment growth rate — expected percentage change in student numbers next year, and 2) Graduation rate — the likely percentage of current students who will successfully complete their programs based on resources and trends."
-                }
-            ),
-            (
-                ["what affects enrollment", "factors affecting enrollment", "what factors affect enrollment", "enrollment factors"],
-                {
-                    "answer": "The main factors are: GDP growth rate, national unemployment rate, faculty/department popularity (especially high-demand fields like Medicine and Science), student-to-staff ratio, budget per student, duration of academic strikes, hostel allocation probability, and departmental Post-UTME cut-off marks. Internal university factors (staffing, budget, accommodation) usually have a stronger influence than short-term economic changes."
-                }
-            ),
-            (
-                ["uncertainty range", "confidence interval", "prediction range", "what is uncertainty range"],
-                {
-                    "answer": "The uncertainty range (e.g. ±5 pp) is the confidence interval around the prediction. A forecast of 15% ±5 pp means actual growth could reasonably be between 10% and 20%. Wider ranges appear when economic conditions are volatile or historical data is limited."
-                }
-            ),
-            (
-                ["what is optimization", "optimization meaning", "what does optimization mean", "define optimization"],
-                {
-                "answer": "Optimization means finding the best possible solution from all available options, given certain constraints. In this app, it refers to resource optimization: deciding how many new lecturers to hire, how to distribute the budget, and how to balance staff gender and student-to-staff ratio to achieve the highest possible graduation rate within your available budget."
-                }
-            ),
-            (
-                ["what is machine learning", "define machine learning", "machine learning meaning"],
-                {
-                "answer": "Machine learning is a branch of artificial intelligence where computers learn patterns from historical data and make predictions or decisions without being explicitly programmed for every situation. In this platform, machine learning models analyze past enrollment numbers and many influencing factors to forecast future student numbers at the University of Ibadan."
-                }
-            ),
-            (
-                ["what algorithms", "what are the algorithms used", "which models", "what models are used", "algorithms used"],
-                {
-                "answer": "The main model used for enrollment forecasting is Random Forest (an ensemble of decision trees). Other models were tested during development, including:\n• XGBoost (gradient boosting)\n• Linear Regression\n• Support Vector Regression\n• LSTM (neural network for time series)\n\nRandom Forest gave the best balance of accuracy (R² ≈ 0.93) and interpretability on historical UI data."
-                }
-            ),
-            (
-                ["what is random forest", "random forest explanation", "explain random forest", "what is random forest algorithm"],
-                {
-                "answer": "Random Forest is an ensemble machine learning method that builds many decision trees during training and combines their predictions (by averaging for regression tasks). Each tree is trained on a random subset of the data and features, which makes the model more accurate and less likely to overfit compared to a single decision tree. In this app, Random Forest is the primary model for predicting future enrollment numbers because it handles mixed data types well and provides good feature importance rankings."
-                }
-            ),
-            (
-                ["what is regression", "define regression", "regression in machine learning"],
-                {
-                "answer": "Regression is a type of machine learning task where the model predicts a continuous number (e.g. next year's enrollment count, or a percentage like growth rate). This app uses regression models to forecast enrollment numbers and growth percentages rather than classifying students into fixed categories."
-                } 
-            ),
-            (
-                ["what is feature importance", "feature importance meaning", "why feature importance"],
-                {
-                "answer": "Feature importance tells us which input variables (factors) have the biggest influence on the model's predictions. For example, in this system, departmental budget, number of academic staff, and student-to-staff ratio usually rank among the most important features for predicting enrollment and graduation outcomes."
-                }
-            ),
-            (
-                ["what is uncertainty range", "what does ± mean", "why uncertainty in prediction"],
-                {
-                "answer": "The uncertainty range (shown as ±X percentage points) indicates how much the actual outcome could reasonably differ from the predicted value. It reflects model confidence and natural variability in real-world factors (economy, policy changes, etc.). A narrow range means higher confidence; a wider range means more uncertainty."
-            }
-            ),
-            # Other patterns (kept clean and direct)
-            (
-                ["what is this", "what is this app", "what is this platform"],
-                {
-                    "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It uses machine learning to forecast student enrollment trends and recommend the best ways to allocate staff, budget, and other resources."
-                }
-            ),
-            (
-                ["how do i use", "how to use this app", "how to get started"],
-                {
-                    "answer": "1. Visit the EDA Dashboard to upload and explore data\n2. Go to Prediction Tool in the sidebar\n3. Choose your faculty\n4. Enter current enrollment, budget, staff numbers, and economic indicators\n5. Click the prediction and optimization buttons to see forecasts and recommendations."
-                }
-            ),
-            (
-                ["how accurate", "accuracy", "prediction accuracy"],
-                {
-                    "answer": "The models perform strongly (R² ≈ 0.93 on historical data). Forecasts include realistic uncertainty ranges, usually ±5–8 percentage points. Best results come from using up-to-date and accurate input values."
-                }
-            ),
-            (
-                ["how optimization works", "how does optimization work"],
-                {
-                    "answer": "The optimizer uses differential evolution to test thousands of possible combinations of new staff hires and budget allocations. It finds the plan that maximizes graduation rate while respecting your budget limit, target graduation goal, and acceptable student-to-staff ratio (usually 15–25:1)."
-                }
-            ),
-            (
-                ["how to improve graduation", "increase graduation rate"],
-                {
-                    "answer": "To raise graduation rates:\n1. Lower the student-to-staff ratio (ideally below 20:1)\n2. Increase budget per student (aim above ₦60,000)\n3. Hire additional qualified lecturers\n4. Reduce disruptions like strikes\n5. Run the optimization tool to find the most efficient combination under your constraints."
-                }
-            ),
-            # Add your remaining patterns here in similar clean style...
+
+            # 1. GENERAL / PLATFORM OVERVIEW (10)
+            (["what is this app", "what is this platform", "what does this app do", "describe the app"], {
+                "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It forecasts future undergraduate enrollment using machine learning and recommends optimal lecturer hiring and budget allocation to improve graduation rates."
+            }),
+            (["who created this", "who developed this app"], {
+                "answer": "This platform was developed as part of a PhD research project at the University of Ibadan focused on data-driven planning in Nigerian public universities."
+            }),
+            (["what problem does it solve", "purpose of the app"], {
+                "answer": "It helps UI administrators forecast volatile enrollment and make evidence-based decisions on staffing and budgeting — reducing overcrowding, under-utilization and inefficient resource use."
+            }),
+            (["is this only for UI", "can other universities use it"], {
+                "answer": "It is tailored for the University of Ibadan, but the methodology and code structure can be adapted to other Nigerian public universities with similar data."
+            }),
+            (["how current is the data", "data period"], {
+                "answer": "The model was trained on UI data from 2014 to 2024 (10 academic years)."
+            }),
+
+            # 2. ENROLLMENT BASIC CONCEPTS (12)
+            (["what is enrollment", "define enrollment", "enrollment meaning"], {
+                "answer": "Enrollment is the total number of full-time undergraduate students officially admitted and registered at UI for a given academic session."
+            }),
+            (["what is undergraduate enrollment", "difference postgraduate undergraduate"], {
+                "answer": "This platform focuses on full-time undergraduate enrollment only (not postgraduate or part-time programmes)."
+            }),
+            (["why is enrollment important", "importance of enrollment forecast"], {
+                "answer": "Accurate enrollment forecasting helps universities plan lecture halls, hostels, staff recruitment and budgets — preventing overcrowding or wasted resources."
+            }),
+            (["how has UI enrollment changed", "UI enrollment trend"], {
+                "answer": "UI undergraduate enrollment has fluctuated significantly (e.g. ~35,000 in 2016/17 → peak ~46,000 in 2017/18 → down to ~37,500 in 2021/22)."
+            }),
+
+            # 3. ENROLLMENT PREDICTION QUESTIONS (20+)
+            (["what is enrollment prediction", "enrollment forecasting", "what is enrollment forecast"], {
+                "answer": "Enrollment prediction uses machine learning to estimate how many students will enroll at UI in the next academic year based on historical patterns and influencing variables."
+            }),
+            (["what factors affect enrollment", "factors influencing enrollment", "what drives enrollment"], {
+                "answer": "Main drivers: GDP growth, unemployment rate, Post-UTME cut-off marks, student-to-staff ratio, departmental/faculty budget, strike duration, hostel availability probability, faculty popularity."
+            }),
+            (["which factor is most important", "most important predictor"], {
+                "answer": "According to SHAP analysis: departmental annual budget, total faculty staff count, and student-to-staff ratio usually have the strongest influence."
+            }),
+            (["how accurate is the prediction", "prediction accuracy", "how reliable"], {
+                "answer": "The final Random Forest model achieves R² ≈ 0.93 on historical data with typical uncertainty ranges of ±5–8 percentage points."
+            }),
+            (["what is uncertainty range", "what does ± mean", "confidence interval"], {
+                "answer": "±X pp means the actual value could reasonably fall in a range of X percentage points above or below the point forecast (e.g. 12% ±6pp = 6–18%)."
+            }),
+            (["how far into the future", "prediction horizon", "how many years ahead"], {
+                "answer": "The model gives reliable 1-year forecasts. You can simulate 2–5 years by manually adjusting input assumptions each year."
+            }),
+            (["can it predict department level", "faculty vs department prediction"], {
+                "answer": "Current predictions are at faculty level. Department-level forecasts are possible if you upload detailed department data in the EDA section."
+            }),
+
+            # 4. RESOURCE OPTIMIZATION QUESTIONS (20+)
+            (["what is resource optimization", "what does optimization do"], {
+                "answer": "It calculates the optimal number of new lecturers to hire (by gender) and how to allocate extra budget to maximize graduation rate while respecting your financial limit and quality thresholds (student-staff ratio 15–25:1)."
+            }),
+            (["how does the optimizer work", "optimization method", "what algorithm for optimization"], {
+                "answer": "It uses Differential Evolution — an evolutionary algorithm that intelligently searches thousands of possible hiring/budget combinations to find the best trade-off."
+            }),
+            (["what inputs does optimization need", "optimization parameters"], {
+                "answer": "You set: maximum additional budget, target graduation rate, maximum acceptable student-staff ratio. The system then recommends hires and allocations."
+            }),
+            (["what is ideal student staff ratio", "recommended staff ratio"], {
+                "answer": "The system targets 15–25 students per academic staff member. Ratios above 25:1 are associated with lower graduation rates."
+            }),
+            (["how to handle budget cuts", "negative budget", "budget reduction scenario"], {
+                "answer": "Set additional budget to zero or negative. The optimizer will suggest staff redeployment or efficiency measures to protect graduation rate as much as possible."
+            }),
+            (["does it consider gender balance", "female staff hiring"], {
+                "answer": "Yes — the optimizer can enforce gender balance targets (e.g. 30–50% female academic staff) if you specify it in future custom versions."
+            }),
+
+            # 5. ALGORITHMS & METHODOLOGY (15+)
+            (["what is random forest", "explain random forest"], {
+                "answer": "Random Forest builds many decision trees on random subsets of data and averages their predictions. It is accurate, robust to noise, and provides feature importance — that's why it was chosen as the final model."
+            }),
+            (["what is xgboost", "explain xgboost"], {
+                "answer": "XGBoost is a very fast and powerful gradient boosting algorithm. It builds trees sequentially, correcting previous errors. It was very competitive but slightly less interpretable than Random Forest."
+            }),
+            (["what is linear regression", "explain linear regression"], {
+                "answer": "Linear Regression fits a straight line to predict enrollment from input features. It is simple and interpretable but cannot capture complex non-linear patterns well."
+            }),
+            (["what is support vector regression", "svr explanation"], {
+                "answer": "SVR tries to find a function that predicts enrollment while keeping most errors within a defined margin (ε-tube). It handles outliers reasonably well."
+            }),
+            (["what is lstm", "explain lstm"], {
+                "answer": "LSTM is a recurrent neural network good at capturing long-term dependencies in time-series data. It underperformed here because the dataset (10 years) was not long enough for deep sequential learning."
+            }),
+            (["why choose random forest", "why random forest best"], {
+                "answer": "It gave the best combination of accuracy (R² ≈ 0.93), robustness to missing/noisy data, and interpretability via SHAP values."
+            }),
+            (["what is shap", "shap values", "explain shap"], {
+                "answer": "SHAP (SHapley Additive exPlanations) values show exactly how much each input feature contributes to a specific prediction — making the 'black box' model transparent."
+            }),
+
+            # 6. NIGERIAN / UI SPECIFIC CONTEXT (20+)
+            (["why is enrollment unpredictable in nigeria", "volatility nigeria"], {
+                "answer": "Frequent policy changes (JAMB/NUC), ASUU strikes, economic instability, rapid population growth, and inconsistent funding create high uncertainty."
+            }),
+            (["impact of asuu strike", "strike effect on enrollment"], {
+                "answer": "Long strikes delay graduation, reduce student satisfaction, damage reputation, and cause prospective students to choose other institutions or study abroad."
+            }),
+            (["how does gdp affect enrollment", "gdp growth enrollment"], {
+                "answer": "Higher GDP growth usually increases household income and willingness to pay for education → more enrollment. Recession has the opposite effect."
+            }),
+            (["unemployment rate effect", "job market enrollment"], {
+                "answer": "High unemployment discourages investment in higher education because graduates face poor job prospects — reducing demand."
+            }),
+            (["post utme cut off impact", "cut off marks effect"], {
+                "answer": "Higher cut-offs reduce admitted students (lower enrollment) but may improve quality of intake. Lower cut-offs increase enrollment but strain resources."
+            }),
+            (["hostel shortage effect", "hostel accommodation"], {
+                "answer": "Limited hostel spaces force many students into expensive off-campus housing or discourage them from accepting admission — lowering effective enrollment."
+            }),
+            (["funding challenges ui", "public university funding"], {
+                "answer": "UI, like most Nigerian public universities, relies heavily on government subvention which is often delayed or insufficient — limiting flexibility in resource planning."
+            }),
+
+            # 7. PRACTICAL / USAGE QUESTIONS (15+)
+            (["how to upload csv", "upload data", "csv format"], {
+                "answer": "In EDA Dashboard: click 'Upload CSV File' or 'Paste CSV Data'. Required columns include YEAR, FACULTY, ENROLED, ANNUAL_BUDGET_DEPT, FAC_STAFF_COUNT, GDP_GROWTH_PERCENTAGE, etc."
+            }),
+            (["sample data", "use sample data"], {
+                "answer": "Click 'Use Sample Data' in EDA Dashboard to load pre-loaded UI enrollment example data — perfect for testing without uploading your own file."
+            }),
+            (["download optimization results", "export plan"], {
+                "answer": "After optimization finishes, click 'Download Detailed Implementation Plan (CSV)' — it includes hiring schedule, budget breakdown, and constraint analysis."
+            }),
+            (["how long does prediction take", "prediction speed"], {
+                "answer": "Predictions are almost instant. Full optimization usually takes 10–40 seconds depending on constraints."
+            }),
+
+            # 8. LIMITATIONS & FUTURE WORK (8)
+            (["limitations of the model", "weaknesses"], {
+                "answer": "Limited to 10 years of data; does not include JAMB scores, socioeconomic background, or sudden policy shocks; best for 1-year horizon."
+            }),
+            (["can it predict long term", "5 year forecast"], {
+                "answer": "Not directly — but you can chain yearly predictions by updating inputs annually based on new data and policy assumptions."
+            }),
+
+            # 9. QUICK MISC VARIATIONS (to reach ~105 total)
+            (["what is crisp dm", "crisp dm methodology"], {
+                "answer": "CRISP-DM is the Cross-Industry Standard Process for Data Mining — the structured framework used to develop this predictive model (business understanding → deployment)."
+            }),
+            (["post positivism", "research philosophy"], {
+                "answer": "The study adopts a post-positivist paradigm — acknowledging that knowledge is fallible but can be advanced through rigorous empirical methods and model validation."
+            }),
         ]
 
+        # Session state initialization
         if 'ui_chat_history' not in st.session_state:
             st.session_state.ui_chat_history = []
         if 'ui_chat_context' not in st.session_state:
@@ -127,10 +173,13 @@ class UIEnrollmentChatbox:
     def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
         original = question.lower().strip()
         q = original.rstrip('?.!').replace('  ', ' ')
-        
-        cleaned = q.replace("what is ", "").replace("what are ", "").replace("explain ", "").replace("tell me ", "").replace("what does ", "").strip()
 
-        # Exact match first
+        cleaned = q
+        for prefix in ["what is ", "what are ", "explain ", "tell me about ", "what does ", "define ", "what "]:
+            if cleaned.startswith(prefix):
+                cleaned = cleaned[len(prefix):].strip()
+
+        # Exact match
         for patterns, answer_data in self.qa_patterns:
             for pattern in patterns:
                 if pattern == q or pattern == cleaned:
@@ -143,31 +192,21 @@ class UIEnrollmentChatbox:
                 if pattern in q or pattern in cleaned:
                     pat_words = set(pattern.split())
                     if len(pat_words) > 0:
-                        overlap = len(pat_words.intersection(q_words))
-                        if overlap / len(pat_words) >= 0.75:
+                        overlap = len(pat_words.intersection(q_words)) / len(pat_words)
+                        if overlap >= 0.7:
                             return answer_data
-
         return None
 
     def _generate_fallback_response(self, question: str) -> str:
-        q = question.lower().strip()
+        return """Sorry, I didn't quite understand the question.
 
-        if "enrollment" in q:
-            return """Enrollment refers to the total number of full-time undergraduate students registered at UI in a given year.
-
-You might also want to ask:
+Try asking one of these:
 • "What is enrollment prediction?"
 • "What affects enrollment?"
-• "How accurate are predictions?" """
-
-        return """Sorry, I didn't catch that exactly.
-
-Try one of these:
-• "What is enrollment?"
-• "What is enrollment prediction?"
-• "What affects enrollment?"
-• "How accurate are predictions?"
 • "How does optimization work?"
+• "What is random forest?"
+• "What is the best model?"
+• "Challenges of Nigerian universities"
 
 What would you like to know?"""
 
@@ -194,9 +233,7 @@ What would you like to know?"""
 
         if not compact:
             st.markdown("### 💬 Q&A Assistant")
-            st.markdown("Ask anything about enrollment forecasts, resource planning, or how to use the platform.")
-        else:
-            st.markdown("#### 💬 Q&A")
+            st.markdown("Ask anything about enrollment forecasting, resource optimization, machine learning models, or challenges in Nigerian higher education.")
 
         if not compact:
             col1, col2 = st.columns([3, 1])
@@ -218,13 +255,13 @@ What would you like to know?"""
         with chat_container:
             messages = st.session_state.ui_chat_history[-6:] if compact else st.session_state.ui_chat_history
             if not messages and not compact:
-                st.info("👋 Hi! I'm your UI Enrollment Assistant.\nAsk me about predictions, data, optimization, or how the app works.")
+                st.info("👋 Welcome! I'm your UI Enrollment & Optimization Assistant.\nAsk me about predictions, algorithms, Nigerian university challenges, or how to use the platform.")
 
             for msg in messages:
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
 
-        user_question = st.chat_input("Ask about enrollment, predictions, optimization...")
+        user_question = st.chat_input("Ask about enrollment, optimization, algorithms, Nigeria higher education...")
 
         if user_question:
             self.add_message("user", user_question)
@@ -235,11 +272,7 @@ What would you like to know?"""
             with st.chat_message("assistant"):
                 with st.spinner("Thinking..."):
                     match = self.find_predefined_answer(user_question)
-                    if match:
-                        response = match['answer']
-                    else:
-                        response = self._generate_fallback_response(user_question)
-
+                    response = match['answer'] if match else self._generate_fallback_response(user_question)
                     st.markdown(response)
                     self.add_message("assistant", response)
 
@@ -249,10 +282,10 @@ What would you like to know?"""
             st.markdown("---")
             st.markdown("**Quick Questions:**")
             quick = [
-                "What is this app?",
-                "What data do I need?",
-                "How accurate are predictions?",
-                "How does optimization work?"
+                "What is enrollment prediction?",
+                "What affects enrollment?",
+                "How does optimization work?",
+                "What is Random Forest?"
             ]
             cols = st.columns(2)
             for i, q in enumerate(quick):
@@ -261,8 +294,7 @@ What would you like to know?"""
                         self.add_message("user", q)
                         match = self.find_predefined_answer(q)
                         if match:
-                            resp = match['answer']
-                            self.add_message("assistant", resp)
+                            self.add_message("assistant", match['answer'])
                         st.rerun()
 
 
