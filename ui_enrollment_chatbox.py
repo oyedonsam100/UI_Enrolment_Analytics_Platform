@@ -43,7 +43,48 @@ class UIEnrollmentChatbox:
                     "answer": "The uncertainty range (e.g. ±5 pp) is the confidence interval around the prediction. A forecast of 15% ±5 pp means actual growth could reasonably be between 10% and 20%. Wider ranges appear when economic conditions are volatile or historical data is limited."
                 }
             ),
-
+            (
+                ["what is optimization", "optimization meaning", "what does optimization mean", "define optimization"],
+                {
+                "answer": "Optimization means finding the best possible solution from all available options, given certain constraints. In this app, it refers to resource optimization: deciding how many new lecturers to hire, how to distribute the budget, and how to balance staff gender and student-to-staff ratio to achieve the highest possible graduation rate within your available budget."
+                }
+            ),
+            (
+                ["what is machine learning", "define machine learning", "machine learning meaning"],
+                {
+                "answer": "Machine learning is a branch of artificial intelligence where computers learn patterns from historical data and make predictions or decisions without being explicitly programmed for every situation. In this platform, machine learning models analyze past enrollment numbers and many influencing factors to forecast future student numbers at the University of Ibadan."
+                }
+            ),
+            (
+                ["what algorithms", "what are the algorithms used", "which models", "what models are used", "algorithms used"],
+                {
+                "answer": "The main model used for enrollment forecasting is Random Forest (an ensemble of decision trees). Other models were tested during development, including:\n• XGBoost (gradient boosting)\n• Linear Regression\n• Support Vector Regression\n• LSTM (neural network for time series)\n\nRandom Forest gave the best balance of accuracy (R² ≈ 0.93) and interpretability on historical UI data."
+                }
+            ),
+            (
+                ["what is random forest", "random forest explanation", "explain random forest", "what is random forest algorithm"],
+                {
+                "answer": "Random Forest is an ensemble machine learning method that builds many decision trees during training and combines their predictions (by averaging for regression tasks). Each tree is trained on a random subset of the data and features, which makes the model more accurate and less likely to overfit compared to a single decision tree. In this app, Random Forest is the primary model for predicting future enrollment numbers because it handles mixed data types well and provides good feature importance rankings."
+                }
+            ),
+            (
+                ["what is regression", "define regression", "regression in machine learning"],
+                {
+                "answer": "Regression is a type of machine learning task where the model predicts a continuous number (e.g. next year's enrollment count, or a percentage like growth rate). This app uses regression models to forecast enrollment numbers and growth percentages rather than classifying students into fixed categories."
+                } 
+            ),
+            (
+                ["what is feature importance", "feature importance meaning", "why feature importance"],
+                {
+                "answer": "Feature importance tells us which input variables (factors) have the biggest influence on the model's predictions. For example, in this system, departmental budget, number of academic staff, and student-to-staff ratio usually rank among the most important features for predicting enrollment and graduation outcomes."
+                }
+            ),
+            (
+                ["what is uncertainty range", "what does ± mean", "why uncertainty in prediction"],
+                {
+                "answer": "The uncertainty range (shown as ±X percentage points) indicates how much the actual outcome could reasonably differ from the predicted value. It reflects model confidence and natural variability in real-world factors (economy, policy changes, etc.). A narrow range means higher confidence; a wider range means more uncertainty."
+            }
+            ),
             # Other patterns (kept clean and direct)
             (
                 ["what is this", "what is this app", "what is this platform"],
