@@ -20,6 +20,40 @@ class UIEnrollmentChatbox:
     def __init__(self):
         """Initialize the chatbox with UI-specific Q&A pairs."""
         self.predefined_qa = {
+            # GENERAL QUESTIONS
+            "what is this": {
+                "answer": "This is the University of Ibadan Enrollment Prediction and Resource Optimization Platform. It's an AI-powered system that helps predict student enrollment trends and optimize resource allocation for better planning and decision-making.",
+                "category": "general"
+            },
+            "what is this app": {
+                "answer": "This platform provides three main features: 1) EDA Dashboard for exploring enrollment data, 2) AI-powered enrollment growth predictions, and 3) Resource optimization tools to help with staffing and budget planning at University of Ibadan.",
+                "category": "general"
+            },
+            "what is this platform": {
+                "answer": "This is a comprehensive analytics platform for University of Ibadan that combines data analysis, machine learning predictions, and optimization algorithms to forecast enrollment and plan resources effectively.",
+                "category": "general"
+            },
+            "about this app": {
+                "answer": "The UI Enrollment Platform helps university administrators make data-driven decisions by forecasting enrollment trends, predicting graduation rates, and recommending optimal resource allocation strategies.",
+                "category": "general"
+            },
+            "what is enrollment": {
+                "answer": "Enrollment refers to the number of students admitted and registered at the university. This platform predicts enrollment growth rates based on historical data, economic indicators, faculty capacity, and policy factors.",
+                "category": "general"
+            },
+            "what is enrollment prediction": {
+                "answer": "Enrollment prediction uses machine learning to forecast how many students will enroll in future years. The system analyzes factors like GDP growth, unemployment rates, budget per student, and historical trends to make 1-year projections with uncertainty ranges.",
+                "category": "general"
+            },
+            "what is prediction": {
+                "answer": "Prediction in this app refers to forecasting future enrollment numbers and graduation rates using AI models trained on historical University of Ibadan data. Predictions include uncertainty ranges to show confidence levels.",
+                "category": "general"
+            },
+            "explain predictions": {
+                "answer": "The platform makes two types of predictions: 1) Enrollment Growth Rate - how much enrollment will change next year (e.g., +5.2%), and 2) Graduation Rate - what percentage of students are expected to graduate based on current resources.",
+                "category": "general"
+            },
+            
             # APP USAGE
             "how do i use this app": {
                 "answer": "Navigate using the sidebar: Start with the EDA Dashboard to explore data, then use the Prediction Tool to forecast enrollment and optimize resources. Select your faculty, input parameters, and get AI-powered predictions.",
@@ -166,31 +200,142 @@ class UIEnrollmentChatbox:
             st.session_state.ui_chat_context = {}
     
     def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
-        """Search for predefined answers using keyword matching."""
+        """Search for predefined answers using improved keyword matching."""
         question_lower = question.lower().strip()
         
-        # Exact match
+        # Remove question marks and extra spaces
+        question_lower = question_lower.replace('?', '').strip()
+        
+        # Exact match first
         if question_lower in self.predefined_qa:
             return self.predefined_qa[question_lower]
         
-        # Keyword matching
+        # Check if the full key phrase appears in the question (most accurate)
+        for key, value in self.predefined_qa.items():
+            if key in question_lower:
+                return value
+        
+        # Keyword matching with better scoring
         best_match = None
         best_score = 0
+        min_threshold = 3  # Require at least 3 matching words
+        
+        question_words = set(question_lower.split())
+        
+        # Filter out common words that shouldn't count
+        stop_words = {'is', 'are', 'the', 'a', 'an', 'what', 'how', 'why', 'when', 
+                      'where', 'can', 'do', 'does', 'this', 'that', 'i', 'my', 'me'}
+        question_words = question_words - stop_words
         
         for key, value in self.predefined_qa.items():
-            question_words = set(question_lower.split())
-            key_words = set(key.split())
+            key_words = set(key.split()) - stop_words
+            
+            # Calculate overlap
             overlap = len(question_words.intersection(key_words))
             
-            # Also check for key phrases in the question
-            if key in question_lower:
-                overlap += 3  # Boost for containing the full key phrase
+            # Calculate match percentage (more important for short questions)
+            if len(question_words) > 0:
+                match_percentage = overlap / len(question_words)
+            else:
+                match_percentage = 0
             
-            if overlap > best_score and overlap >= 2:
-                best_score = overlap
-                best_match = value
+            # Scoring: prioritize high match percentage and overlap
+            score = overlap + (match_percentage * 2)
+            
+            # Require minimum overlap AND good match percentage
+            if score > best_score and overlap >= min(min_threshold, len(key_words)):
+                # Additional check: avoid matching if key is much longer than question
+                # (e.g., "prediction" shouldn't match "what is uncertainty range")
+                if len(key_words) <= len(question_words) * 2:
+                    best_score = score
+                    best_match = value
         
-        return best_match
+        # Only return if we have a strong match
+        if best_score >= min_threshold:
+            return best_match
+        
+        return None
+    
+    def _generate_fallback_response(self, question: str) -> str:
+        """Generate helpful fallback response when no match is found."""
+        
+        # Analyze question to provide relevant suggestions
+        question_lower = question.lower()
+        
+        # Check for topic keywords
+        if any(word in question_lower for word in ['data', 'upload', 'csv', 'file', 'format']):
+            return """**Data & Upload Help:** I can help with data-related questions! Try asking:
+            
+- "What data do I need?"
+- "What format should data be?"
+- "CSV upload not working"
+- "How to use sample data?"
+
+Or navigate to the **EDA Dashboard** to upload and explore your data."""
+        
+        elif any(word in question_lower for word in ['predict', 'forecast', 'enrollment', 'growth']):
+            return """**Enrollment Predictions:** I can help with prediction questions! Try asking:
+
+- "How accurate are predictions?"
+- "What affects enrollment growth?"
+- "How far ahead can I predict?"
+- "What is uncertainty range?"
+
+Or go to the **Prediction Tool** to generate forecasts."""
+        
+        elif any(word in question_lower for word in ['optimize', 'resource', 'staff', 'budget', 'hire']):
+            return """**Resource Optimization:** I can help with optimization! Try asking:
+
+- "How does optimization work?"
+- "What resources can be optimized?"
+- "How to improve graduation rate?"
+- "Optimization parameters"
+
+Or use the **Prediction Tool** and scroll to the optimization section."""
+        
+        elif any(word in question_lower for word in ['faculty', 'faculties', 'department']):
+            return """**University Structure:** I can help with organizational questions! Try asking:
+
+- "Which faculties are included?"
+- "How to select department?"
+
+**Available Faculties:** Agriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, Veterinary Medicine."""
+        
+        elif any(word in question_lower for word in ['graduation', 'graduate', 'rate']):
+            return """**Graduation Rates:** I can help with graduation-related questions! Try:
+
+- "Graduation rate prediction"
+- "How to improve graduation rate?"
+
+The system predicts graduation rates based on student-staff ratios, budget per student, and resource allocation."""
+        
+        elif any(word in question_lower for word in ['error', 'not working', 'problem', 'issue', 'fix']):
+            return """**Troubleshooting:** I can help! Try asking:
+
+- "Models not loading"
+- "CSV upload not working"
+- "Predictions seem wrong"
+
+Or describe your specific issue and I'll try to help!"""
+        
+        else:
+            # General fallback
+            return """I'm here to help with University of Ibadan enrollment predictions and resource optimization! 
+
+**Popular topics I can help with:**
+
+📊 **App Usage:** "How do I use this app?"
+📁 **Data:** "What data do I need?"
+🎯 **Predictions:** "How accurate are predictions?"
+💰 **Optimization:** "How does optimization work?"
+🏛️ **Faculties:** "Which faculties are included?"
+
+**Or try:**
+- Click the quick question buttons below
+- Ask about a specific feature you see on the page
+- Describe what you're trying to do
+
+What would you like to know?"""
     
     def get_ai_response(self, question: str, context: Dict[str, Any]) -> str:
         """
@@ -331,9 +476,15 @@ class UIEnrollmentChatbox:
                         response = f"**{predefined['category'].title()}:** {predefined['answer']}"
                         metadata = {"source": "predefined", "category": predefined['category']}
                     else:
-                        # Fall back to AI response
-                        response = self.get_ai_response(user_question, st.session_state.ui_chat_context)
-                        metadata = {"source": "ai"}
+                        # Check if we should try AI or provide helpful fallback
+                        if hasattr(st, 'secrets') and 'ANTHROPIC_API_KEY' in st.secrets:
+                            # AI is configured, use it
+                            response = self.get_ai_response(user_question, st.session_state.ui_chat_context)
+                            metadata = {"source": "ai"}
+                        else:
+                            # No AI configured, provide helpful fallback
+                            response = self._generate_fallback_response(user_question)
+                            metadata = {"source": "fallback"}
                     
                     st.markdown(response)
                     self.add_message("assistant", response, metadata)
