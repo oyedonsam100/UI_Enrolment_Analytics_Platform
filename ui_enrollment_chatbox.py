@@ -1,6 +1,6 @@
 """
 Q&A Chatbox for University of Ibadan Enrollment Prediction System
-Fixed version with reliable question matching - 2025 improved edition
+FINAL FIXED VERSION - reliable exact & cleaned matching - July 2025
 """
 import streamlit as st
 import json
@@ -14,38 +14,41 @@ class UIEnrollmentChatbox:
     """
 
     def __init__(self):
-        """Initialize with carefully ordered, specific-first Q&A patterns."""
+        """Initialize with strict priority ordering: exact → specific → general"""
         self.qa_patterns = [
-            # ──────────────────────────────────────────────────────────────
-            # MOST SPECIFIC QUESTIONS FIRST (prevents overlap/false matches)
-            # ──────────────────────────────────────────────────────────────
+            # === HIGHEST PRIORITY: Very exact common questions ===
             (
-                ["what affects enrollment", "factors affecting enrollment", "what factors affect enrollment", "enrollment factors"],
+                ["what is enrollment", "define enrollment", "enrollment meaning", "what does enrollment mean"],
                 {
-                    "answer": "Key factors include: GDP growth rate, unemployment rate, faculty demand (especially high-demand fields like Medicine and Science), student-staff ratio, budget per student, strike duration, hostel allocation probability, and departmental Post-UTME cut-off marks. Internal institutional factors (staffing, budget, accommodation) usually have stronger influence than short-term economic changes.",
-                    "category": "prediction"
+                    "answer": "Enrollment is the total number of students admitted and registered at the University of Ibadan for a given academic year (full-time undergraduates). This platform predicts future enrollment trends and helps optimize resources (staff, budget, hostels) to match expected numbers.",
+                    "category": "general"
                 }
             ),
-
             (
-                ["uncertainty range", "confidence interval", "prediction range", "what is uncertainty range"],
-                {
-                    "answer": "The uncertainty range (±X pp) shows the confidence interval for the prediction. For example, a 15% ±5pp prediction means enrollment growth could realistically fall between 10% and 20%. Larger ranges indicate higher uncertainty (e.g., due to volatile economic conditions or limited historical data).",
-                    "category": "prediction"
-                }
-            ),
-
-            # ──────────────────────────────────────────────────────────────
-            # Medium specificity
-            # ──────────────────────────────────────────────────────────────
-            (
-                ["what is enrollment prediction", "enrollment forecasting", "what is enrollment forecasting"],
+                ["what is enrollment prediction", "enrollment forecasting", "what is enrollment forecasting", "enrollment prediction meaning"],
                 {
                     "answer": "Enrollment prediction uses machine learning models (primarily Random Forest) to forecast how many students will enroll in the coming year. It analyzes 10+ years of UI data plus external factors like GDP growth, unemployment, budget, staffing, strikes, hostel availability, and Post-UTME policies to generate 1-year projections with uncertainty ranges.",
                     "category": "prediction"
                 }
             ),
 
+            # === Next: Specific but slightly varied ===
+            (
+                ["what affects enrollment", "factors affecting enrollment", "what factors affect enrollment", "enrollment factors", "factors that affect enrollment"],
+                {
+                    "answer": "Key factors include: GDP growth rate, unemployment rate, faculty demand (especially high-demand fields like Medicine and Science), student-staff ratio, budget per student, strike duration, hostel allocation probability, and departmental Post-UTME cut-off marks. Internal institutional factors (staffing, budget, accommodation) usually have stronger influence than short-term economic changes.",
+                    "category": "prediction"
+                }
+            ),
+            (
+                ["uncertainty range", "confidence interval", "prediction range", "what is uncertainty range", "what does uncertainty range mean"],
+                {
+                    "answer": "The uncertainty range (±X pp) shows the confidence interval for the prediction. For example, a 15% ±5pp prediction means enrollment growth could realistically fall between 10% and 20%. Larger ranges indicate higher uncertainty (e.g., due to volatile economic conditions or limited historical data).",
+                    "category": "prediction"
+                }
+            ),
+
+            # === General explanations ===
             (
                 ["what is prediction", "what are predictions", "explain prediction", "predictions meaning"],
                 {
@@ -54,17 +57,14 @@ class UIEnrollmentChatbox:
                 }
             ),
 
+            # === App & usage ===
             (
-                ["what is enrollment", "define enrollment", "enrollment meaning", "what does enrollment mean"],
+                ["what is this", "what is this app", "what is this platform", "tell me about this app"],
                 {
-                    "answer": "Enrollment is the total number of students admitted and registered at the University of Ibadan for a given academic year (full-time undergraduates). This platform predicts future enrollment trends and helps optimize resources (staff, budget, hostels) to match expected numbers.",
+                    "answer": "This is the **University of Ibadan Enrollment Prediction and Resource Optimization Platform**. It uses machine learning to forecast student enrollment trends and recommend optimal staff hiring, budget allocation, and resource planning to improve graduation rates and operational efficiency.",
                     "category": "general"
                 }
             ),
-
-            # ──────────────────────────────────────────────────────────────
-            # App usage & structure
-            # ──────────────────────────────────────────────────────────────
             (
                 ["how do i use", "how to use this app", "how to get started", "getting started"],
                 {
@@ -73,17 +73,7 @@ class UIEnrollmentChatbox:
                 }
             ),
 
-            (
-                ["what is this", "what is this app", "what is this platform", "tell me about this app"],
-                {
-                    "answer": "This is the **University of Ibadan Enrollment Prediction and Resource Optimization Platform**. It uses machine learning to forecast student enrollment trends and recommend optimal staff hiring, budget allocation, and resource planning to improve graduation rates and operational efficiency.",
-                    "category": "general"
-                }
-            ),
-
-            # ──────────────────────────────────────────────────────────────
-            # Data & upload
-            # ──────────────────────────────────────────────────────────────
+            # === Data & upload ===
             (
                 ["what data", "data needed", "data required", "data format", "csv columns"],
                 {
@@ -91,7 +81,6 @@ class UIEnrollmentChatbox:
                     "category": "data"
                 }
             ),
-
             (
                 ["csv not working", "upload fails", "cant upload", "upload error", "file upload problem"],
                 {
@@ -100,9 +89,7 @@ class UIEnrollmentChatbox:
                 }
             ),
 
-            # ──────────────────────────────────────────────────────────────
-            # Optimization & graduation
-            # ──────────────────────────────────────────────────────────────
+            # === Optimization & graduation ===
             (
                 ["how optimization works", "optimization algorithm", "how does optimization work"],
                 {
@@ -110,7 +97,6 @@ class UIEnrollmentChatbox:
                     "category": "optimization"
                 }
             ),
-
             (
                 ["how to improve graduation", "increase graduation rate", "improve graduation rate"],
                 {
@@ -119,9 +105,7 @@ class UIEnrollmentChatbox:
                 }
             ),
 
-            # ──────────────────────────────────────────────────────────────
-            # General / catch-all at the bottom
-            # ──────────────────────────────────────────────────────────────
+            # === Other useful ones ===
             (
                 ["how accurate", "accuracy", "prediction accuracy", "how reliable"],
                 {
@@ -129,17 +113,16 @@ class UIEnrollmentChatbox:
                     "category": "prediction"
                 }
             ),
-
             (
                 ["faculties", "which faculties", "list of faculties"],
                 {
-                    "answer": "All 16 UI faculties are supported:\nAgriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design & Management, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, Veterinary Medicine, and more.",
+                    "answer": "All 16 UI faculties are supported:\nAgriculture, Arts, Basic Medical Sciences, Clinical Sciences, Dentistry, Education, Environmental Design & Management, Law, Pharmacy, Public Health, Renewable Natural Resources, Science, Social Sciences, Technology, Veterinary Medicine.",
                     "category": "structure"
                 }
             ),
         ]
 
-        # Session state initialization
+        # Session state
         if 'ui_chat_history' not in st.session_state:
             st.session_state.ui_chat_history = []
         if 'ui_chat_context' not in st.session_state:
@@ -147,58 +130,69 @@ class UIEnrollmentChatbox:
 
     def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
         """
-        Stricter matching: specific → general, cleaned question, overlap check
+        Ultra-reliable matching: exact phrase first, then cleaned strong match
         """
-        q = question.lower().strip().rstrip('?.!').replace('  ', ' ')
+        original = question.lower().strip()
+        q = original.rstrip('?.!').replace('  ', ' ')
 
-        # Remove common prefixes for cleaner matching
-        cleaned = q.replace("what is ", "").replace("what are ", "").replace("explain ", "").replace("tell me ", "").strip()
+        # Cleaned version (remove common starters)
+        cleaned = q.replace("what is ", "").replace("what are ", "").replace("explain ", "").replace("tell me ", "").replace("what does ", "").strip()
 
+        # Priority 1: Exact full-string match (after cleaning)
         for patterns, answer_data in self.qa_patterns:
             for pattern in patterns:
-                # Pattern must appear in original or cleaned version
+                if pattern == q or pattern == cleaned:
+                    return answer_data
+
+        # Priority 2: Pattern appears as substring + high word overlap
+        q_words = set(cleaned.split())
+        for patterns, answer_data in self.qa_patterns:
+            for pattern in patterns:
                 if pattern in q or pattern in cleaned:
-                    # Require reasonable word overlap for short patterns
                     pat_words = set(pattern.split())
-                    q_words = set(cleaned.split())
-                    overlap = len(pat_words.intersection(q_words))
-                    if len(pat_words) > 0 and overlap / len(pat_words) >= 0.6:
-                        # print(f"DEBUG MATCH: '{question}' → '{pattern}'")  # uncomment for debugging
-                        return answer_data
+                    if len(pat_words) > 0:
+                        overlap = len(pat_words.intersection(q_words))
+                        score = overlap / len(pat_words)
+                        if score >= 0.75:
+                            return answer_data
 
         return None
 
     def _generate_fallback_response(self, question: str) -> str:
-        q = question.lower()
-        if any(w in q for w in ['data', 'upload', 'csv', 'file', 'format']):
-            return """**Data / Upload help**  
-Try asking:  
-• "What data do I need?"  
-• "CSV not working"  
-Or go to **EDA Dashboard** → Upload section"""
+        q = question.lower().strip()
 
-        if any(w in q for w in ['predict', 'forecast', 'growth', 'enroll', 'accuracy']):
-            return """**Predictions help**  
+        if "enrollment" in q and "prediction" not in q:
+            return """**I think you're asking about enrollment itself**  
+
+Enrollment is the total number of students admitted and registered at UI for a given academic year.
+
 Try asking:  
+• "What is enrollment?"  
 • "What is enrollment prediction?"  
+• "What affects enrollment?"  
+
+Or go to **Prediction Tool** to generate forecasts."""
+
+        if "prediction" in q:
+            return """**Looking for info about predictions?**  
+
+Try one of these exact questions:  
+• "What is enrollment prediction?"  
+• "What is prediction?"  
 • "How accurate are predictions?"  
 • "What affects enrollment?"  
-Go to **Prediction Tool** → Generate forecast"""
 
-        if any(w in q for w in ['optimi', 'resource', 'staff', 'budget', 'hire', 'graduation']):
-            return """**Optimization / Graduation help**  
-Try asking:  
-• "How does optimization work?"  
-• "How to improve graduation rate?"  
-Use **Prediction Tool** → Optimization section"""
+Head to **Prediction Tool** to see live forecasts."""
 
-        return """**I'm here to help!**  
+        # Default helpful fallback
+        return """**Sorry, I didn't quite catch that — but I'm here to help!**  
+
 Popular questions:  
-• "What is this app?"  
-• "What data do I need?"  
+• "What is enrollment?"  
+• "What is enrollment prediction?"  
+• "What affects enrollment?"  
 • "How accurate are predictions?"  
 • "How does optimization work?"  
-• "Which faculties are included?"  
 
 What would you like to know? 😊"""
 
@@ -229,7 +223,7 @@ What would you like to know? 😊"""
         else:
             st.markdown("#### 💬 Q&A")
 
-        # Clear & Export buttons
+        # Controls
         if not compact:
             col1, col2 = st.columns([3, 1])
             with col1:
@@ -246,7 +240,7 @@ What would you like to know? 😊"""
                         mime="application/json"
                     )
 
-        # Chat messages
+        # Display messages
         chat_container = st.container()
         with chat_container:
             messages = st.session_state.ui_chat_history[-6:] if compact else st.session_state.ui_chat_history
@@ -257,7 +251,7 @@ What would you like to know? 😊"""
                 with st.chat_message(msg["role"]):
                     st.markdown(msg["content"])
 
-        # Input
+        # Input field
         user_question = st.chat_input("Ask about enrollment, predictions, optimization...")
 
         if user_question:
@@ -281,7 +275,7 @@ What would you like to know? 😊"""
 
             st.rerun()
 
-        # Quick questions buttons
+        # Quick buttons
         if not compact:
             st.markdown("---")
             st.markdown("**Quick Questions:**")
