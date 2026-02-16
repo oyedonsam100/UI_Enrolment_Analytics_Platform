@@ -10,6 +10,7 @@ from pathlib import Path
 import requests
 from io import BytesIO
 from scipy.optimize import differential_evolution
+from ui_enrollment_chatbox import render_ui_chatbox
 
 # --------------------------------------------------
 # PAGE CONFIG
