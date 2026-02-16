@@ -216,32 +216,49 @@ class UIEnrollmentChatbox:
         if 'ui_chat_context' not in st.session_state:
             st.session_state.ui_chat_context = {}
 
-    def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
-        original = question.lower().strip()
-        q = original.rstrip('?.!').replace('  ', ' ')
+def find_predefined_answer(self, question: str) -> Optional[Dict[str, str]]:
+    original = question.lower().strip()
+    # Fix: normalize multiple spaces
+    q = original.rstrip('?.!,').replace('  ', ' ').replace('   ', ' ')
 
-        cleaned = q
-        for prefix in ["what is ", "what are ", "explain ", "tell me about ", "what does ", "define ", "what "]:
+    # More thorough prefix removal (loop until no more prefixes)
+    cleaned = q
+    prefixes = ["what is ", "what are ", "explain ", "tell me about ", "what does ", "define ", "what ", "tell me "]
+    changed = True
+    while changed:
+        changed = False
+        for prefix in prefixes:
             if cleaned.startswith(prefix):
                 cleaned = cleaned[len(prefix):].strip()
+                changed = True
 
-        # Exact match
-        for patterns, answer_data in self.qa_patterns:
-            for pattern in patterns:
-                if pattern == q or pattern == cleaned:
-                    return answer_data
+    # Debug prints (remove later if you want)
+    # print(f"DEBUG: Original: '{original}'")
+    # print(f"DEBUG: q:        '{q}'")
+    # print(f"DEBUG: cleaned:  '{cleaned}'")
 
-        # Strong substring + overlap
-        q_words = set(cleaned.split())
-        for patterns, answer_data in self.qa_patterns:
-            for pattern in patterns:
-                if pattern in q or pattern in cleaned:
-                    pat_words = set(pattern.split())
-                    if len(pat_words) > 0:
-                        overlap = len(pat_words.intersection(q_words)) / len(pat_words)
-                        if overlap >= 0.7:
-                            return answer_data
-        return None
+    # 1. Exact full match on cleaned or q
+    for patterns, answer_data in self.qa_patterns:
+        for pattern in patterns:
+            if pattern == q or pattern == cleaned:
+                # print(f"DEBUG: Exact match → {pattern}")
+                return answer_data
+
+    # 2. Strong substring match + overlap (lowered threshold slightly for short terms)
+    q_words = set(cleaned.split())
+    for patterns, answer_data in self.qa_patterns:
+        for pattern in patterns:
+            # substring check
+            if pattern in q or pattern in cleaned:
+                pat_words = set(pattern.split())
+                if len(pat_words) > 0:
+                    overlap_ratio = len(pat_words.intersection(q_words)) / len(pat_words)
+                    if overlap_ratio >= 0.65:  # slightly relaxed for short words like "eda"
+                        # print(f"DEBUG: Overlap match → {pattern} (ratio {overlap_ratio:.2f})")
+                        return answer_data
+
+    # print("DEBUG: No match")
+    return None
 
     def _generate_fallback_response(self, question: str) -> str:
         return """Sorry, I didn't quite understand the question.
