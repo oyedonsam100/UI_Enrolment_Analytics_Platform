@@ -137,18 +137,7 @@ UI_Enrolment_Analytics_Platform/
 - 🌐 Portfolio: [github.com/SamuelOyedokun](https://github.com/SamuelOyedokun)
 - 💼 LinkedIn: [samuel-oyedokun-b41895142](https://www.linkedin.com/in/samuel-oyedokun-b41895142)
 - 📧 thesamueloyedokun@gmail.com
-- 🚀 Live Market Dashboard: [sot-market-intelligence-dashboard.streamlit.app](https://sot-market-intelligence-dashboard.streamlit.app)
 
----
 
-## Other Projects
-
-| Project | Description | Link |
-|---|---|---|
-| SOT Market Intelligence | Real-time financial analytics · AI · NGX · US Stocks · Crypto | [Live →](https://sot-market-intelligence-dashboard.streamlit.app) |
-| KPI Intelligence Center | Automated BI pipeline · SQL Server · PDF reports · 19 countries | [Live →](https://kpi-reporting-system-ifxehqzoojyy5g6qcsvob8.streamlit.app) |
-| SOT Business Intelligence | Nigerian business analytics · AI chatbot · ML forecasting | [GitHub →](https://github.com/SamuelOyedokun) |
-
----
 
 *Built as part of MSc Information Science research — University of Ibadan, 2026.*
