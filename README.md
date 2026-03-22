@@ -140,4 +140,4 @@ UI_Enrolment_Analytics_Platform/
 
 
 
-*Built as part of MSc Information Science research — University of Ibadan, 2026.*
+*Built as part of Masters of Information Science research — University of Ibadan, 2026.*
